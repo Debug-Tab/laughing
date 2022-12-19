@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="./css/style.css">
+
+</head>
+<body>
+<div id="terminal">
+    <span class="prefix">[<span id='usr'>usr</span>@<span class="host">localhost</span> <span
+            id="directory">~</span>]<span id="pos"> $</span></span>
+    <input id="terminal-input" type="text" autofocus="autofocus" onblur="refocus(this);" onkeydown="keydown();"/>
+
+</div>
+<script type="text/javascript" src="js/main.js"></script>
+
+</body>
+</html>

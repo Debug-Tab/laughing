@@ -1,0 +1,39 @@
+body {
+    background-color: #202A35;
+}
+input {
+    border-width: 0;
+    outline: none;
+    background-color: rgba(0, 0, 0, 0);
+    width: 666px;
+    height: 20px;
+    font-size: 17px;
+    color: white;
+    display: inline-block;
+}
+
+span {
+    display: inline-block;
+    font-size: 17px;
+    color: white;
+}
+
+* {
+    cursor: text;
+}
+
+#usr {
+    color: #55ff55 !important;
+}
+
+.host {
+    color: #5555FF !important;
+}
+
+#directory {
+    color: #FFFF55 !important;
+}
+
+#pos {
+    color: #FF5555 !important;
+}
