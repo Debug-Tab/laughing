@@ -1,0 +1,30 @@
+{
+  "name": "/",
+  "type": "dir",
+  "data": [
+    {
+      "name": "blog",
+      "type": "dir",
+      "data": [
+        {
+          "name": "My-first-blog.md",
+          "type": "file",
+          "data": "Hello World!"
+        }
+      ]
+    },
+
+    {
+      "name": "egg",
+      "type": "dir",
+      "data": [
+        {
+          "name": "egg2",
+          "type": "dir",
+          "data": {}
+        }
+      ]
+    }
+
+  ]
+}
