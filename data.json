@@ -9,28 +9,9 @@
         {
           "name": "My-first-blog.md",
           "type": "file",
-          "data": "Hello World!"
-        },
-        {
-          "name": "temp",
-          "type": "dir",
-          "data": {
-          }
-        }
-      ]
-    },
-
-    {
-      "name": "egg",
-      "type": "dir",
-      "data": [
-        {
-          "name": "egg2",
-          "type": "dir",
-          "data": {}
+          "data": "Welcome to my blog!\nI'm Tabmax.I'm a Chinese student."
         }
       ]
     }
-
   ]
 }

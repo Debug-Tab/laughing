@@ -1,5 +1,5 @@
 //定义命令
-const cmd_head = ["help", "cat", "ls", "cd", "clear", "sudo", "mkdir"]
+const cmd_head = ["help", "update", "cat", "ls", "cd", "clear", "sudo", "mkdir"]
 
 //定义目录
 var directory = []
@@ -118,7 +118,7 @@ function keydown(e) {
 
 
 
-function getCurrentDir(d, path) {
+function getCurrentDir(d, path, nopath=false) {
     //console.log([d,path]);
     if(path.length==0) return dir;
     let name = Object.keys(getAllName(d["data"]));
@@ -133,6 +133,14 @@ function getCurrentDir(d, path) {
 
         }
         return -2;
+    }
+    if (nopath) {
+        var temp = {
+            "name": path.slice(-1),
+            "type": "dir",
+            "data": {}
+        };
+        d["data"].push(temp);
     }
     return -1;
 
@@ -230,5 +238,12 @@ function cat(argv) {
 }
 
 function mkdir(argv) {
-    return ""
+    getCurrentDir(dir,getRealPath(argv[0]))
+    return "";
+}
+
+function update(argv) {
+    getJson();
+    directory = [];
+    return "<span>Updatine data.json!</span><br>";
 }
