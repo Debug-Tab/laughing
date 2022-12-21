@@ -10,6 +10,12 @@
           "name": "My-first-blog.md",
           "type": "file",
           "data": "Hello World!"
+        },
+        {
+          "name": "temp",
+          "type": "dir",
+          "data": {
+          }
         }
       ]
     },

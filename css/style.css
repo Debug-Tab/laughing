@@ -18,6 +18,12 @@ span {
     color: white;
 }
 
+p {
+    display: inline-block;
+    font-size: 17px;
+    color: white;
+}
+
 * {
     cursor: text;
 }
