@@ -16,8 +16,11 @@
 已拦截跨源请求：同源策略禁止读取位于 file:///XXXX/data.json 的远程资源。（原因：CORS 请求不是 http）。
 ```
 自己搜索:[搭建本地server](https://debug-tab.github.io/baiduyx/index.html?搭建本地server)
+
 如果你使用**Webstorm**之类的编辑器，一般可以在本地搭建server
+
 运行后，网址类似localhost:1234/123/index.html
+
 举几个例子
 
 ### Python
@@ -52,6 +55,8 @@ http-server -c-1
 - update (更新)
 
 - sudo (存粹好玩)
+
+- mkdir (创建文件夹)
 
 文件/文件夹操作命令正在制作中。但是有个问题，以前都是获取路径后，递归获取文件夹数据，怎么修改是个大问题，得到的只是数据，操作也没用。如有想法，欢迎留言。
 ## 文件

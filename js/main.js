@@ -116,14 +116,15 @@ function keydown(e) {
 function getCurrentDir(d, path, nopath = false) {
     //console.log([d,path]);
     if (path.length == 0) return dir;
-    let name = Object.keys(getAllName(d["data"]));
+    let name = getAllName(d["data"]);
     if (name.includes(path[0])) {
-        let l = name.indexOf(path[0])
+        let l = name.indexOf(path[0]);
+        console.log(name);
         if (typeof d["data"][l]["data"] == typeof []) {
             if (path.length == 1) {
-                return d["data"][l]
+                return d["data"][l];
             } else {
-                return getCurrentDir(d["data"][l], path.slice(1))
+                return getCurrentDir(d["data"][l], path.slice(1), nopath);
             }
 
         }
@@ -131,9 +132,8 @@ function getCurrentDir(d, path, nopath = false) {
     }
     if (nopath) {
         var temp = {
-            "name": path.slice(-1),
-            "type": "dir",
-            "data": {}
+            "name": path.slice(-1)[0],
+            "data": []
         };
         d["data"].push(temp);
     }
@@ -167,7 +167,7 @@ function cd(argv) {
     let dirl = getRealPath(argv[0]);
 
     let cdir = getCurrentDir(dir, dirl);
-    console.log(dirl);
+    console.log(`cd: Currentdir-return ${cdir}`);
     if (cdir == -1) {
         return `<span style="color: red">Error: No such file or directory.</span><br>`;
     } else if(cdir == -2){
@@ -178,13 +178,10 @@ function cd(argv) {
     }
 }
 
-function findKey(obj, value, compare = (a, b) => a === b) {
-    return Object.keys(obj).find(k => compare(obj[k], value))
-}
 
 function ls(argv) {
     let Cdir = getCurrentDir(dir, directory);
-    let name = getAllName(Cdir["data"]);
+    let name = getAllName_Data(Cdir["data"]);
     let dirList = [], fileList = [];
     for (let t in name) {
         if (typeof name[t]["data"] == typeof []) {
@@ -201,10 +198,18 @@ function ls(argv) {
 }
 
 //获取所有名称
-function getAllName(data) {
+function getAllName_Data(data) {
     let name = {};
     for (let l = 0; l < data.length; l++) {
         name[data[l]["name"]] = data[l];
+    }
+    return name;
+}
+
+function getAllName(data) {
+    let name = [];
+    for (let l = 0; l < data.length; l++) {
+        name.push(data[l]["name"]);
     }
     return name;
 }
@@ -224,14 +229,14 @@ function clear(argv) {
 function cat(argv) {
     let p = getRealPath(argv[0]);
     let d = getCurrentDir(dir, p.slice(0, -1));
-    let name = getAllName(d["data"])
+    let name = getAllName_Data(d["data"])
     console.log(p, d, name)
-    let text = getAllName(d["data"])[p.slice(-1)]["data"];
+    let text = getAllName_Data(d["data"])[p.slice(-1)]["data"];
     return `<span>${text}</span><br>`;
 }
 
 function mkdir(argv) {
-    getCurrentDir(dir, getRealPath(argv[0]))
+    getCurrentDir(dir, getRealPath(argv[0]), true)
     return "";
 }
 
