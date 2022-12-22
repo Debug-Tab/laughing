@@ -25,21 +25,19 @@ function getJson() {
             function (data) {
                 //console.log(data);
                 dir = data;
-                Cookies.set('file',JSON.stringify(dir));
+                Cookies.set('file', JSON.stringify(dir));
             }
     });
 
 }
 
-if(Cookies.get('file')==undefined){
+if (Cookies.get('file') == undefined) {
     getJson();
-}
-else {
+} else {
     try {
         console.log("Try to read the data in cookie")
         dir = JSON.parse(unescape(Cookies.get('file')));
-    }
-    catch(err) {
+    } catch (err) {
         console.log(`Error:cannot read the real data in cookie.\nCookie:${document.cookie}`);
         getJson();
     }
@@ -49,12 +47,11 @@ for (let i of document.getElementsByClassName("host")) {
 }
 
 
-
 //运行命令
 function run() {
     //获取输入的数值
     let script = input.value;
-    if (script=="") return "";
+    if (script == "") return "";
     //按空格分割
     script = script.split(" ");
     //去除空字符串
@@ -63,8 +60,8 @@ function run() {
     //输出
     console.log(`Run script:${script}`);
 
-    if(script[0]=="sudo") script = script.slice(1);
-        //如果命令不存在
+    if (script[0] == "sudo") script = script.slice(1);
+    //如果命令不存在
     if (!cmd_head.includes(script[0]) || !script) {
         return `<span style="color: red">Error:</span>
             <span style="color: #FF5555;text-decoration: underline">${input.value}</span>
@@ -72,7 +69,6 @@ function run() {
     }
     return eval(`${script[0]}(script.slice(1))`);
 }
-
 
 
 function parseHTML(html) {
@@ -117,13 +113,12 @@ function keydown(e) {
 }
 
 
-
-function getCurrentDir(d, path, nopath=false) {
+function getCurrentDir(d, path, nopath = false) {
     //console.log([d,path]);
-    if(path.length==0) return dir;
+    if (path.length == 0) return dir;
     let name = Object.keys(getAllName(d["data"]));
     if (name.includes(path[0])) {
-        let l=name.indexOf(path[0])
+        let l = name.indexOf(path[0])
         if (d["data"][l]["type"] == "dir") {
             if (path.length != 1) {
                 return getCurrentDir(d["data"][l], path.slice(1))
@@ -147,20 +142,19 @@ function getCurrentDir(d, path, nopath=false) {
 }
 
 function getRealPath(d) {
-    if(typeof d==typeof ""){
+    if (typeof d == typeof "") {
         //相对路径
         if (d[0] != "/") {
             d = directory.concat(d.split("/"));
-        }
-        else {
+        } else {
             d = d.split("/")
         }
         d = d.filter((x) => x !== '');
     }
 
 
-    while (d.includes("..")){
-        d.splice(d.indexOf("..")-1, 2);
+    while (d.includes("..")) {
+        d.splice(d.indexOf("..") - 1, 2);
     }
     return d;
 }
@@ -168,16 +162,15 @@ function getRealPath(d) {
 
 function cd(argv) {
     if (argv.length != 1) {
-        return `<span style="color: red">Error: too many arguments to cd</span>`
+        return `<span style="color: red">Error: too many arguments to cd</span><br>`
     }
     let dirl = getRealPath(argv[0]);
 
     let cdir = getCurrentDir(dir, dirl);
     console.log(dirl);
-    if(cdir==-1 || cdir==-2){
+    if (cdir == -1 || cdir == -2) {
         return `<span style="color: red">Error: No such file or directory</span><br>`;
-    }
-    else{
+    } else {
         directory = dirl;
         return "";
     }
@@ -188,15 +181,14 @@ function findKey(obj, value, compare = (a, b) => a === b) {
 }
 
 function ls(argv) {
-    let Cdir = getCurrentDir(dir,directory);
+    let Cdir = getCurrentDir(dir, directory);
     let name = getAllName(Cdir["data"]);
-    let dirList=[],fileList=[];
-    for(let t in name){
-        if (name[t]["type"]=="dir"){
+    let dirList = [], fileList = [];
+    for (let t in name) {
+        if (name[t]["type"] == "dir") {
             //dirList.push(name[t]);
             dirList.push(t);
-        }
-        else {
+        } else {
             //fileList.push(name[t]);
             fileList.push(t);
         }
@@ -210,8 +202,8 @@ function ls(argv) {
 //获取所有名称
 function getAllName(data) {
     let name = {};
-    for (let l=0; l < data.length; l++) {
-            name[data[l]["name"]] = data[l];
+    for (let l = 0; l < data.length; l++) {
+        name[data[l]["name"]] = data[l];
     }
     return name;
 }
@@ -220,25 +212,25 @@ function clear(argv) {
     var child = terminal.firstChild;
     var last = terminal.lastChild;
     var t;
-    while(child != last) {
+    while (child != last) {
         t = child;
         child = child.nextSibling;
-        if(t.tagName!="INPUT" && t.tagName!="SCRIPT") t.remove();
+        if (t.tagName != "INPUT" && t.tagName != "SCRIPT") t.remove();
     }
     return "";
 }
 
 function cat(argv) {
-    let p=getRealPath(argv[0]);
-    let d = getCurrentDir(dir,p.slice(0,-1));
+    let p = getRealPath(argv[0]);
+    let d = getCurrentDir(dir, p.slice(0, -1));
     let name = getAllName(d["data"])
-    console.log(p,d,name)
+    console.log(p, d, name)
     let text = getAllName(d["data"])[p.slice(-1)]["data"];
     return `<span>${text}</span><br>`;
 }
 
 function mkdir(argv) {
-    getCurrentDir(dir,getRealPath(argv[0]))
+    getCurrentDir(dir, getRealPath(argv[0]))
     return "";
 }
 
