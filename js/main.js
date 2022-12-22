@@ -119,11 +119,11 @@ function getCurrentDir(d, path, nopath = false) {
     let name = Object.keys(getAllName(d["data"]));
     if (name.includes(path[0])) {
         let l = name.indexOf(path[0])
-        if (d["data"][l]["type"] == "dir") {
-            if (path.length != 1) {
-                return getCurrentDir(d["data"][l], path.slice(1))
-            } else {
+        if (typeof d["data"][l]["data"] == typeof []) {
+            if (path.length == 1) {
                 return d["data"][l]
+            } else {
+                return getCurrentDir(d["data"][l], path.slice(1))
             }
 
         }
@@ -168,9 +168,11 @@ function cd(argv) {
 
     let cdir = getCurrentDir(dir, dirl);
     console.log(dirl);
-    if (cdir == -1 || cdir == -2) {
-        return `<span style="color: red">Error: No such file or directory</span><br>`;
-    } else {
+    if (cdir == -1) {
+        return `<span style="color: red">Error: No such file or directory.</span><br>`;
+    } else if(cdir == -2){
+        return `<span style="color: red">Error "${argv[0]}" is not a folder.</span><br>`
+    } else{
         directory = dirl;
         return "";
     }
@@ -185,16 +187,15 @@ function ls(argv) {
     let name = getAllName(Cdir["data"]);
     let dirList = [], fileList = [];
     for (let t in name) {
-        if (name[t]["type"] == "dir") {
+        if (typeof name[t]["data"] == typeof []) {
             //dirList.push(name[t]);
             dirList.push(t);
         } else {
             //fileList.push(name[t]);
             fileList.push(t);
         }
-        //console.log(name[t]["type"])
     }
-    //console.log(dirList,fileList);
+    console.log(dirList,fileList);
     return `<span style="color: yellow">${dirList.join(" ")}</span>
             <span style="color: deepskyblue">${fileList.join(" ")}</span><br>`;
 }

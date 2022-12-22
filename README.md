@@ -9,13 +9,17 @@
 我的操作系统为Windows，对Linux不熟悉，如有错误，欢迎指正
 
 ## 注意！！！请不要直接双击打开index.html，它需要请求**data.json**，会报错！
+
+报错如下
+
 ```错误
 已拦截跨源请求：同源策略禁止读取位于 file:///XXXX/data.json 的远程资源。（原因：CORS 请求不是 http）。
 ```
 自己搜索:[搭建本地server](https://debug-tab.github.io/baiduyx/index.html?搭建本地server)
-如果你使用Webstorm之类的编辑器，一般可以在本地搭建server
+如果你使用**Webstorm**之类的编辑器，一般可以在本地搭建server
 运行后，网址类似localhost:1234/123/index.html
 举几个例子
+
 ### Python
 如果有Python的话，命令
 ```cmd
@@ -54,11 +58,13 @@ http-server -c-1
 
 作为一个终端，当然需要操控文件了
 
-此项目使用json文件模拟文件/文件夹结构，数据存放在data.json里
+此项目使用json文件模拟文件/文件夹结构，数据存放在**data.json**里
 
-默认会尝试读取cookie的file属性，如果失败，则会请求data.json后会把它编码放到cookie里。因此，如果你改变了data.json，请在浏览器打开index.html后，运行update命令，它会自动请求更新。
+默认会尝试读取**cookie**的**file**属性，如果失败，则会请求data.json后会把它编码放到cookie里。因此，如果你改变了data.json，请在浏览器打开index.html后，运行**update**命令，它会自动请求更新。
 
 ### 文件结构
+
+如果data属性是**列表**的话，则认为它是文件夹
 
 比如在根目录有一个文件**test.py**和文件夹**temp**，则这样写json:
 
@@ -69,13 +75,11 @@ http-server -c-1
   "data": [
     {
       "name": "test.py",
-      "type": "file"
       "data": "print('Hello World!')"
     },
     {
       "name": "temp",
-      "type": "dir",
-      "data": {}
+      "data": []
     }
   ]
 }
@@ -83,7 +87,7 @@ http-server -c-1
 
 ### 优化调整
 
-这种写法无疑很没有效率，可以尝试优化，比如，可以通过判断data类型来确认是文件夹还是文件，也可以把data替换为字典。但是没时间。。。
+这种写法无疑很没有效率，可以尝试优化，比如，可以通过判断data类型来确认是文件夹还是文件（已做到！），也可以把data替换为字典。但是没时间。。。
 
 # 原理
 
@@ -97,7 +101,7 @@ http-server -c-1
 
 ## 渲染
 
-不能叫做渲染，其实就是在input标签前加入运行结果和新的提示语，但是上一个输入会被清空，只能在运行结果前放一个<span>上一个命令</span>
+不能叫做渲染，其实就是在input标签前加入运行结果和新的提示语，但是上一个输入会被清空，只能在运行结果前放一个包含上一个命令的span标签
 
 
 
