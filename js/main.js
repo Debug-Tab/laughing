@@ -67,6 +67,8 @@ function run() {
             <span style="color: #FF5555;text-decoration: underline">${input.value}</span>
             <span style="color: red">is not defined</span><br>`;
     }
+    console.log(`return ${script[0]}(script.slice(1))`);
+    //return new Function(`return ${script[0]}(script.slice(1))`)();
     return eval(`${script[0]}(script.slice(1))`);
 }
 
@@ -81,8 +83,7 @@ function parseHTML(html) {
 function refocus(e) {
     let that = this;
     setTimeout(function () {
-        //console.log(that);
-        document.getElementById("terminal-input").focus();
+        //document.getElementById("terminal-input").focus();
     }, 100);
 
 }
@@ -106,6 +107,7 @@ function keydown(e) {
     e = e || window.event;
     if (e.keyCode == 13) {
         Render(run());
+        Cookies.set('file', JSON.stringify(dir));
     }
 
     // 历史
@@ -121,12 +123,7 @@ function getCurrentDir(d, path, nopath = false) {
         let l = name.indexOf(path[0]);
         console.log(name);
         if (typeof d["data"][l]["data"] == typeof []) {
-            if (path.length == 1) {
-                return d["data"][l];
-            } else {
-                return getCurrentDir(d["data"][l], path.slice(1), nopath);
-            }
-
+            return path.length == 1 ? d["data"][l] : getCurrentDir(d["data"][l], path.slice(1), nopath);
         }
         return -2;
     }
@@ -243,5 +240,5 @@ function mkdir(argv) {
 function update(argv) {
     getJson();
     directory = [];
-    return "<span>Updatine data.json!</span><br>";
+    return "<span>Updating data.json!</span><br>";
 }
