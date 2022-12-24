@@ -229,7 +229,7 @@ function cat(argv) {
     let name = getAllName_Data(d["data"])
     console.log(p, d, name)
     let text = getAllName_Data(d["data"])[p.slice(-1)]["data"];
-    return `<span>${text}</span><br>`;
+    return `<span style="white-space: pre;">${text}</span><br>`;
 }
 
 function mkdir(argv) {
