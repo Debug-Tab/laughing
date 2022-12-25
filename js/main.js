@@ -1,5 +1,5 @@
 //定义命令
-const cmd_head = ["help", "update", "cat", "ls", "cd", "clear", "sudo", "mkdir"]
+const cmd_head = ["help", "update", "cat", "ls", "cd", "clear", "sudo", "mkdir", "vim"]
 
 //定义目录
 var directory = []
@@ -64,7 +64,7 @@ function run() {
     //如果命令不存在
     if (!cmd_head.includes(script[0]) || !script) {
         return `<span style="color: red">Error:</span>
-            <span style="color: #FF5555;text-decoration: underline">${input.value}</span>
+            <span style="color: #FF5555;text-decoration: underline">${script[0]}</span>
             <span style="color: red">is not defined</span><br>`;
     }
     console.log(`return ${script[0]}(script.slice(1))`);
@@ -223,12 +223,15 @@ function clear(argv) {
     return "";
 }
 
+function readFile(path) {
+    let d = getCurrentDir(dir, path.slice(0, -1));
+    let name = getAllName_Data(d["data"]);
+    return name[path.slice(-1)]["data"];
+}
+
 function cat(argv) {
     let p = getRealPath(argv[0]);
-    let d = getCurrentDir(dir, p.slice(0, -1));
-    let name = getAllName_Data(d["data"])
-    console.log(p, d, name)
-    let text = getAllName_Data(d["data"])[p.slice(-1)]["data"];
+    let text = readFile(p);
     return `<span style="white-space: pre;">${text}</span><br>`;
 }
 
@@ -241,4 +244,26 @@ function update(argv) {
     getJson();
     directory = [];
     return "<span>Updating data.json!</span><br>";
+}
+
+function vim(argv) {
+    let extensions = {
+        "md": "markdown"
+    };
+    terminal.setAttribute("style","display:none;");
+    CodeMirror.commands.save = function (e) {
+        console.log(e);
+    };
+    let editor = CodeMirror(document.body,
+        {
+            value : readFile(getRealPath(argv[0])),
+            lineNumbers : true,
+            mode : "text/x-markdown",
+            keyMap : "vim",
+            matchBrackets : true,
+            showCursorWhenSelecting : true,
+            inputStyle : "contenteditable",
+            theme: "ayu-mirage",
+            lineWrapping: true
+        });
 }

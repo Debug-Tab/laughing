@@ -7,11 +7,44 @@
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js"></script>
     <link rel="stylesheet" type="text/css" href="./css/style.css">
 
+    <!-- CodeMirror -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/codemirror/lib/codemirror.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/codemirror/addon/dialog/dialog.css">
+    <script src="https://cdn.jsdelivr.net/npm/codemirror/lib/codemirror.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/codemirror/addon/dialog/dialog.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/codemirror/addon/search/searchcursor.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/codemirror/addon/edit/matchbrackets.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/codemirror/keymap/vim.js"></script>
+
+    <!-- 主题 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/codemirror/theme/dracula.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/codemirror/theme/midnight.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/codemirror/theme/solarized.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/codemirror/theme/ayu-mirage.css">
+
+    <!-- 支持代码折叠 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/codemirror/addon/fold/foldgutter.css"/>
+    <script src="https://cdn.jsdelivr.net/npm/codemirror/addon/fold/foldcode.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/codemirror/addon/fold/foldgutter.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/codemirror/addon/fold/brace-fold.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/codemirror/addon/fold/comment-fold.js"></script>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/codemirror/mode/clike/clike.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/codemirror/mode/markdown/markdown.js"></script>
+    <style>
+        .CodeMirror {
+            height: 100%;
+            width: 100%;
+            position: absolute;
+        }
+    </style>
+
 </head>
 <body>
 <div id="terminal">
     <div id="welcome">
-        <pre style="white-space: pre;color: white;">
+        <pre style="color: white;">
  /$$                                     /$$       /$$
 | $$                                    | $$      |__/
 | $$        /$$$$$$  /$$   /$$  /$$$$$$ | $$$$$$$  /$$ /$$$$$$$   /$$$$$$
@@ -25,8 +58,8 @@
                                \______/                          \______/
         </pre>
     </div>
-    <span class="prefix">[<span id='usr'>usr</span>@<span class="host">localhost</span> <span
-            id="directory">/</span>]<span id="pos"> $</span></span>
+    <span class="prefix">[<span id='usr'>usr</span>@<span class="host">localhost</span>
+    <span id="directory">/</span>]<span id="pos">$</span></span>
     <input id="terminal-input" type="text" autofocus="autofocus" onblur="refocus(this);" onkeydown="keydown();"/>
 
 </div>

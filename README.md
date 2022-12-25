@@ -1,4 +1,4 @@
-![image-20221222111430415](img/README/image-20221222111430415.png)
+![title](img/README/title.png)
 
 
 
@@ -79,28 +79,21 @@
 ```
 自己搜索:[搭建本地server](https://debug-tab.github.io/baiduyx/index.html?搭建本地server)
 
-如果你使用**Webstorm**之类的编辑器，一般可以在本地搭建server
+一般**Webstorm**、**Python**等编程工具，可以快速在本地搭建server
+不会也没关系，打开项目目录下的**EasyWebSvr.exe**
 
-运行后，网址类似localhost:1234/123/index.html
+默认打开后会自动在此目录启动server，打开**localhost:5739**就可以了
+如果出现下面这种端口被占用的情况
 
-举几个例子
+![port](img/README/port.png)
 
-### Python
-如果有Python的话，命令
-```cmd
-cd 项目目录
-python -m http.server 7089
-```
-打开localhost:7089/index.html就可以了
+按以下步骤做：
 
-### npm
-```cmd
-cd 项目目录
-npm install http-server -g
-http-server -c-1
-```
-接着打开localhost:8080
+![1](img/README/1.png)
+![2](img/README/2.png)
+![3](img/README/3.png)
 
+接着打开**localhost:你设置的端口号**
 # 原理
 
 主要程序都在 **/js/main.js** 里
@@ -117,4 +110,4 @@ http-server -c-1
 
 
 
-# 未完待续。。。(手动狗头)
+## 未完待续。。。(手动狗头)

@@ -12,7 +12,7 @@ input {
     display: inline-block;
 }
 
-span {
+#terminal > span {
     display: inline-block;
     font-size: 17px;
     color: white;

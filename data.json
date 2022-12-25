@@ -6,7 +6,7 @@
       "data": [
         {
           "name": "My-first-blog.md",
-          "data": "Welcome to my blog!\nI'm Tabmax.I'm a Chinese student."
+          "data": "# Welcome to my blog!\nI'm **Tabmax**.\nI'm a Chinese student."
         },
         {
           "name": "temp",
