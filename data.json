@@ -1,18 +1,30 @@
 {
-  "name": "/",
-  "data": [
-    {
-      "name": "blog",
-      "data": [
+    "name": "/",
+    "data": [
         {
-          "name": "My-first-blog.md",
-          "data": "# Welcome to my blog!\nI'm **Tabmax**.\nI'm a Chinese student."
+            "name": "111",
+            "data": [
+                {
+                    "name": "1",
+                    "data": []
+                },
+                {
+                    "name": "m.txt",
+                    "data": "if"
+                }
+            ]
         },
         {
-          "name": "temp",
-          "data": []
+            "name": "data.py",
+            "data": "from pathlib import Path\nimport json\nimport sys\n\ndef getPath(path):\n    json = {\n        'name': path.name,\n        'data': []\n    }\n    for i in Path.iterdir(path):\n        if Path.is_dir(i):\n            json['data'].append(getPath(i))\n        else:\n            with open(i, 'r', encoding='UTF-8') as f:\n                json['data'].append({\n                    'name': i.name,\n                    'data': f.read()\n                })\n    return json\n\npath = Path(Path.cwd() if len(sys.argv)==1 else sys.argv[1])\njson = json.dumps(getPath(path), indent=4)\nif \"-save\" in sys.argv:\n    with open(sys.argv[sys.argv.index(\"-save\")+1], 'w') as f:\n        f.write(json)\nelse:\n    print(json)\n"
+        },
+        {
+            "name": "make.js",
+            "data": "ttt\n{}\n\"\"\n\\"
+        },
+        {
+            "name": "test.txt",
+            "data": "\u7b2c\u4e00\u884c\n\u7b2c\u4e8c\u884c\\n\n\u7b2c\u4e09\u884c"
         }
-      ]
-    }
-  ]
+    ]
 }

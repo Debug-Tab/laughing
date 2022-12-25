@@ -156,6 +156,29 @@ function getRealPath(d) {
     return d;
 }
 
+function readFile(path) {
+    let d = getCurrentDir(dir, path.slice(0, -1));
+    let name = getAllName_Data(d["data"]);
+    return name[path.slice(-1)]["data"];
+}
+
+//获取所有名称
+function getAllName_Data(data) {
+    let name = {};
+    for (let l = 0; l < data.length; l++) {
+        name[data[l]["name"]] = data[l];
+    }
+    return name;
+}
+
+function getAllName(data) {
+    let name = [];
+    for (let l = 0; l < data.length; l++) {
+        name.push(data[l]["name"]);
+    }
+    return name;
+}
+
 
 function cd(argv) {
     if (argv.length != 1) {
@@ -194,23 +217,6 @@ function ls(argv) {
             <span style="color: deepskyblue">${fileList.join(" ")}</span><br>`;
 }
 
-//获取所有名称
-function getAllName_Data(data) {
-    let name = {};
-    for (let l = 0; l < data.length; l++) {
-        name[data[l]["name"]] = data[l];
-    }
-    return name;
-}
-
-function getAllName(data) {
-    let name = [];
-    for (let l = 0; l < data.length; l++) {
-        name.push(data[l]["name"]);
-    }
-    return name;
-}
-
 function clear(argv) {
     var child = terminal.firstChild;
     var last = terminal.lastChild;
@@ -223,11 +229,6 @@ function clear(argv) {
     return "";
 }
 
-function readFile(path) {
-    let d = getCurrentDir(dir, path.slice(0, -1));
-    let name = getAllName_Data(d["data"]);
-    return name[path.slice(-1)]["data"];
-}
 
 function cat(argv) {
     let p = getRealPath(argv[0]);

@@ -10,6 +10,8 @@
 
 但目前功能少的可怜，代码凌乱，仅供学习研究。
 
+请认真看完README文件！
+
 ## 命令
 
 目前实现命令: 
@@ -29,6 +31,34 @@
 - mkdir (创建文件夹)
 
 更多文件/文件夹操作命令正在制作中。
+
+## 注意！！！请不要直接双击打开index.html，它需要请求**data.json**，会报错！
+
+报错如下
+
+```错误
+已拦截跨源请求：同源策略禁止读取位于 file:///XXXX/data.json 的远程资源。（原因：CORS 请求不是 http）。
+```
+自己搜索:[搭建本地server](https://debug-tab.github.io/baiduyx/index.html?搭建本地server)
+
+一般**Webstorm**、**Python**等编程工具，可以快速在本地搭建server
+
+不会也没关系，打开项目目录下的**EasyWebSvr.exe**
+
+默认打开后会自动在此目录启动server，打开**localhost:5739**就可以了
+
+如果出现下面这种端口被占用的情况
+
+![port](img/README/port.png)
+
+按以下步骤做：
+
+![1](img/README/1.png)
+![2](img/README/2.png)
+![3](img/README/3.png)
+
+接着打开**localhost:你设置的端口号**
+
 ## 文件
 
 作为一个终端，当然需要操控文件了
@@ -60,9 +90,23 @@
 }
 ```
 
+### 脚本
+我简单写了一个根据现有目录生成data.json的Python脚本
+
+就是根目录下的**makeData.py**
+
+如果直接运行它，它会将当前目录转为data.json，并输出到命令行
+
+语法如下
+```bash
+python makeData.py //将当前目录转为data.json并输出
+python makeData.py 目录路径 //将第一个参数转为data.json并输出
+python makeData.py 目录路径 -save 保存路径 //将当前目录转为data.json并保存
+```
+
 ### 优化调整
 
-这种写法无疑很没有效率，可以尝试优化，比如，可以通过判断data类型来确认是文件夹还是文件（已实现！），也可以把data替换为字典。但是没时间。。。
+这种写法无疑很没有效率，可以尝试优化。比如，可以通过判断data类型来确认是文件夹还是文件（已实现！），也可以把data替换为字典。但是没时间。。。
 
 # 说明
 
@@ -70,30 +114,6 @@
 
 我的操作系统为Windows，对Linux不熟悉，如有错误，欢迎指正
 
-## 注意！！！请不要直接双击打开index.html，它需要请求**data.json**，会报错！
-
-报错如下
-
-```错误
-已拦截跨源请求：同源策略禁止读取位于 file:///XXXX/data.json 的远程资源。（原因：CORS 请求不是 http）。
-```
-自己搜索:[搭建本地server](https://debug-tab.github.io/baiduyx/index.html?搭建本地server)
-
-一般**Webstorm**、**Python**等编程工具，可以快速在本地搭建server
-不会也没关系，打开项目目录下的**EasyWebSvr.exe**
-
-默认打开后会自动在此目录启动server，打开**localhost:5739**就可以了
-如果出现下面这种端口被占用的情况
-
-![port](img/README/port.png)
-
-按以下步骤做：
-
-![1](img/README/1.png)
-![2](img/README/2.png)
-![3](img/README/3.png)
-
-接着打开**localhost:你设置的端口号**
 # 原理
 
 主要程序都在 **/js/main.js** 里
