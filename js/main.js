@@ -115,7 +115,7 @@ function keydown(e) {
 }
 
 
-function getCurrentDir(d, path, nopath = false) {
+function getCurrentDir(d, path, noPath = false) {
     //console.log([d,path]);
     if (path.length == 0) return dir;
     let name = getAllName(d["data"]);
@@ -123,12 +123,12 @@ function getCurrentDir(d, path, nopath = false) {
         let l = name.indexOf(path[0]);
         console.log(name);
         if (typeof d["data"][l]["data"] == typeof []) {
-            return path.length == 1 ? d["data"][l] : getCurrentDir(d["data"][l], path.slice(1), nopath);
+            return path.length == 1 ? d["data"][l] : getCurrentDir(d["data"][l], path.slice(1), noPath);
         }
         return -2;
     }
-    if (nopath) {
-        var temp = {
+    if (noPath) {
+        let temp = {
             "name": path.slice(-1)[0],
             "data": []
         };
@@ -249,11 +249,17 @@ function update(argv) {
 
 function vim(argv) {
     let extensions = {
-        "md": "markdown"
+        "md": "markdown",
+        "py": "python"
     };
+    let mode = argv[0].split(".").slice(-1)[0];
+    if(!(mode in extensions)) mode="";
+    console.log(mode);
     terminal.setAttribute("style","display:none;");
     CodeMirror.commands.save = function (e) {
-        console.log(e);
+        terminal.setAttribute("style","");
+        getCurrentDir(dir, getRealPath(argv[0]))["data"] = e.options.value;
+        $(".CodeMirror").remove();
     };
     let editor = CodeMirror(document.body,
         {
@@ -266,5 +272,7 @@ function vim(argv) {
             inputStyle : "contenteditable",
             theme: "ayu-mirage",
             lineWrapping: true
-        });
+        }
+    );
+    return "<br>"
 }
