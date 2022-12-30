@@ -115,16 +115,17 @@ function keydown(e) {
 }
 
 
-function getCurrentDir(d, path, noPath = false) {
+function getCurrentDir(d, path, noPath = false, file = false) {
     //console.log([d,path]);
     if (path.length == 0) return dir;
     let name = getAllName(d["data"]);
     if (name.includes(path[0])) {
         let l = name.indexOf(path[0]);
         console.log(name);
-        if (typeof d["data"][l]["data"] == typeof []) {
-            return path.length == 1 ? d["data"][l] : getCurrentDir(d["data"][l], path.slice(1), noPath);
+        if ((typeof d["data"][l]["data"] == typeof []) || file) {
+            return path.length == 1 ? d["data"][l] : getCurrentDir(d["data"][l], path.slice(1), noPath, file);
         }
+        console.log(file)
         return -2;
     }
     if (noPath) {
@@ -133,6 +134,7 @@ function getCurrentDir(d, path, noPath = false) {
             "data": []
         };
         d["data"].push(temp);
+        return d["data"][temp];
     }
     return -1;
 
@@ -190,9 +192,9 @@ function cd(argv) {
     console.log(`cd: Currentdir-return ${cdir}`);
     if (cdir == -1) {
         return `<span style="color: red">Error: No such file or directory.</span><br>`;
-    } else if(cdir == -2){
+    } else if (cdir == -2) {
         return `<span style="color: red">Error "${argv[0]}" is not a folder.</span><br>`
-    } else{
+    } else {
         directory = dirl;
         return "";
     }
@@ -212,7 +214,7 @@ function ls(argv) {
             fileList.push(t);
         }
     }
-    console.log(dirList,fileList);
+    console.log(dirList, fileList);
     return `<span style="color: yellow">${dirList.join(" ")}</span>
             <span style="color: deepskyblue">${fileList.join(" ")}</span><br>`;
 }
@@ -253,26 +255,27 @@ function vim(argv) {
         "py": "python"
     };
     let mode = argv[0].split(".").slice(-1)[0];
-    if(!(mode in extensions)) mode="";
+    mode = (mode in extensions) ? extensions[mode] : mode = "";
     console.log(mode);
-    terminal.setAttribute("style","display:none;");
+    terminal.setAttribute("style", "display:none;");
     CodeMirror.commands.save = function (e) {
-        terminal.setAttribute("style","");
-        getCurrentDir(dir, getRealPath(argv[0]))["data"] = e.options.value;
+        terminal.setAttribute("style", "");
+        getCurrentDir(dir, getRealPath(argv[0]), true, true)["data"] = editor.getValue();
         $(".CodeMirror").remove();
     };
     let editor = CodeMirror(document.body,
         {
-            value : readFile(getRealPath(argv[0])),
-            lineNumbers : true,
-            mode : "text/x-markdown",
-            keyMap : "vim",
-            matchBrackets : true,
-            showCursorWhenSelecting : true,
-            inputStyle : "contenteditable",
+            value: readFile(getRealPath(argv[0])),
+            lineNumbers: true,
+            mode: mode,
+            keyMap: "vim",
+            matchBrackets: true,
+            showCursorWhenSelecting: true,
+            inputStyle: "contenteditable",
             theme: "ayu-mirage",
             lineWrapping: true
         }
     );
+    editor.focus()
     return "<br>"
 }
