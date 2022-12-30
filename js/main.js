@@ -1,4 +1,18 @@
-//定义命令
+/*********************************************/
+/*    File name: main.js                     */
+/*    Function: Command parsing, processing  */
+/*    Last update: 2022.12.30                */
+/*********************************************/
+
+//我是因为发现中文末尾对不齐才写了个英文的。。。
+
+//**************************************
+//    文件名: main.js
+//    功能: 命令解析,处理
+//    最后更新: 2022.12.30
+//**************************************
+
+//定义命令头
 const cmd_head = ["help", "update", "cat", "ls", "cd", "clear", "sudo", "mkdir", "vim"]
 
 //定义目录
@@ -14,8 +28,14 @@ const html = $('body,html');
 var host = window.location.hostname;
 if (host == "") host = "localhost";
 
-//命令历史
 
+/**
+ * **********************************
+ * 函数名: getJson
+ * 功能: 通过ajax获取data.json
+ * 调用位置: 函数下面、update
+ * **********************************
+ */
 function getJson() {
     $.ajax({
         url: "data.json",
@@ -47,7 +67,13 @@ for (let i of document.getElementsByClassName("host")) {
 }
 
 
-//运行命令
+/**
+ * **********************************
+ * 函数名: run
+ * 功能: 获取输入并执行命令
+ * 调用位置: keydown
+ * **********************************
+ */
 function run() {
     //获取输入的数值
     let script = input.value;
@@ -72,7 +98,13 @@ function run() {
     return eval(`${script[0]}(script.slice(1))`);
 }
 
-
+/**
+ * **********************************
+ * 函数名: run
+ * 功能: 获取输入并执行命令
+ * 调用位置: keydown
+ * **********************************
+ */
 function parseHTML(html) {
     let t = document.createElement('template');
     t.innerHTML = html;
