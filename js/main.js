@@ -115,7 +115,7 @@ function run() {
  * **********************************
  * 函数名: parseHTML
  * 功能: 把传入的字符串解析为HTML对象
- * 调用位置: Render
+ * 调用位置: run, Render
  * **********************************
  * @param {String} html - 需转换的HTML字符串
  * @returns {Object} - 转换后的HTML对象
@@ -334,25 +334,27 @@ function vim(argv) {
         "py": "python"
     };
     let mode = argv[0].split(".").slice(-1)[0];
-    mode = (mode in extensions) ? extensions[mode] : mode = "";
+    mode = (mode in extensions) ? extensions[mode] : "null";
     console.log(mode);
+
+    //隐藏其他界面
     terminal.setAttribute("style", "display:none;");
     CodeMirror.commands.save = function (e) {
         terminal.setAttribute("style", "");
         getCurrentDir(dir, getRealPath(argv[0]), true, true)["data"] = editor.getValue();
         $(".CodeMirror").remove();
     };
+
     let editor = CodeMirror(document.body,
         {
-            value: getCurrentDir(dir, getRealPath(argv[0]), false, true), //获取文件内容
+            value: getCurrentDir(dir, getRealPath(argv[0]), false, true)['data'], //获取文件内容
             lineNumbers: true,
             mode: mode,
             keyMap: "vim",
             matchBrackets: true,
             showCursorWhenSelecting: true,
             inputStyle: "contenteditable",
-            theme: "ayu-mirage",
-            lineWrapping: true
+            theme: "ayu-mirage"
         }
     );
     editor.focus()
