@@ -3,10 +3,15 @@
 
 # 说明
 
-请不要尝试去找命令上的BUG，都是特性！比如ls，只能列举当前目录。至于什么命令注入，懒得修。
+请不要尝试去找命令上的BUG，都是特性！比如ls，只能列举当前目录。
 
 我的操作系统为Windows，对Linux不熟悉，如有错误，欢迎指正
 
+本README更新可能会落后源码，如发现问题请自行阅读源码
+
+不过务必认真看完README文件！
+
+更新日志为**update.log**
 
 ## 特性
 
@@ -14,9 +19,7 @@
 
 但目前功能少的可怜，代码凌乱，仅供学习研究。
 
-本README更新可能会落后源码，如发现问题请自行阅读源码
 
-不过还是请认真看完README文件！
 
 ## 注意！！！请不要直接双击打开index.html，它需要ajax请求**data.json**，会报错！
 
@@ -25,13 +28,13 @@
 ```报错
 已拦截跨源请求：同源策略禁止读取位于 file:///XXXX/data.json 的远程资源。（原因：CORS 请求不是 http）。
 ```
-自己搜索:[搭建本地server](https://debug-tab.github.io/baiduyx/index.html?搭建本地server)
 
-一般**Webstorm**、**Python**等编程工具，可以快速在本地搭建server
+
+一般**Webstorm**、**Python**、**nodejs**等环境，可以快速在本地搭建server
 
 没有这些也没关系，打开项目目录下的**EasyWebSvr.exe**
 
-默认打开后会自动在此目录启动server，打开**localhost:5739**就可以了
+默认打开后会自动在此目录启动server，浏览器打开**localhost:5739**就可以了
 
 如果出现下面这种端口被占用的情况
 
@@ -45,6 +48,7 @@
 
 接着打开**localhost:你设置的端口号**即可
 
+如果你有问题 ~~（懒）~~，自己搜索:[搭建本地server](https://debug-tab.github.io/baiduyx/index.html?搭建本地server)
 
 # 功能
 
@@ -75,24 +79,25 @@
 
 作为一个终端，当然需要操控文件了
 
-此项目使用json文件模拟文件/文件夹结构，数据存放在**data.json**里
+此项目使用**json**文件模拟文件/文件夹结构，数据存放在**data.json**里
 
-默认会尝试读取**cookie**的**file**属性，如果失败，则会请求data.json后会把它编码放到cookie里。因此，如果你改变了data.json，请在浏览器打开index.html后，运行**update**命令，它会自动请求更新。
+默认会尝试读取**cookie**的**file**属性，如果失败，则会请求data.json后会把它编码放到cookie里。因此，如果你改变了**data.json**，请在浏览器打开**index.html**后，运行**update**命令，它会自动请求更新。
 
 ### 文件结构
 
-如果data属性是**列表**的话，则认为它是文件夹
+每个文件(夹)是一个字典，**name**表示名字，**data**表示内容
 
-比如在根目录有一个文件**test.py**和文件夹**temp**，则这样写json:
+如果data属性是**列表**的话，则认为它是文件夹。否则认为是文件
+
+比如在根目录有一个文件**test.py**和空文件夹**temp**，则这样写json:
 
 ```json
 {
   "name": "/",
-  "type": "dir",
   "data": [
     {
       "name": "test.py",
-      "data": "print('Hello World!')"
+      "data": "print('Hello World!')\n"
     },
     {
       "name": "temp",
@@ -103,19 +108,20 @@
 ```
 
 ### 脚本
-我简单写了一个根据现有目录生成data.json的Python脚本
+我简单写了一个根据现有目录生成**data.json**的Python脚本
 
 就是根目录下的**makeData.py**
 
-如果直接运行它，它会将当前目录转为data.json，并输出到命令行
+如果直接运行它，它会将当前目录转为**data.json**，并输出到**命令行**
 
-语法如下
+语法如下:
+
 ```bash
-python makeData.py //将当前目录转为data.json并输出
 python makeData.py 目录路径 //将第一个参数转为data.json并输出
-python makeData.py 目录路径 -save 保存路径 //将当前目录转为data.json并保存
+python makeData.py 目录路径 --save 保存路径 //将目录转为data.json并保存
 ```
 
+**请谨慎运行，确保指定目录中没有二进制文件(如.exe, .png, .iso)，否则后果自负！**
 ### 优化调整
 
 这种写法无疑很没有效率，可以尝试优化。比如，可以通过判断data类型来确认是文件夹还是文件（已实现！），也可以把data替换为字典。但是没时间。。。

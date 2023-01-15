@@ -1,6 +1,9 @@
 from pathlib import Path
+
+import argparse
 import json
 import sys
+
 
 def getPath(path):
     json = {
@@ -18,10 +21,29 @@ def getPath(path):
                 })
     return json
 
-path = Path(Path.cwd() if len(sys.argv)==1 else sys.argv[1])
+parser = argparse.ArgumentParser(formatter_class = argparse.RawDescriptionHelpFormatter,
+                                 description = '把文件夹转换为Json.\nConvert a real folder to json.',
+                                 epilog = 'By Tabmax'
+                                 )
+parser.add_argument('path',
+                    metavar = 'Folder-path',
+                    type = str,
+                    help='The path of folder what you want to convert'
+                    )
+parser.add_argument('--save',
+                    dest = 'savePath',
+                    help='The save path of the json file'
+                    )
+
+args = parser.parse_args()
+
+
+path = Path(args.path)
 json = json.dumps(getPath(path), indent=4)
-if "-save" in sys.argv:
-    with open(sys.argv[sys.argv.index("-save")+1], 'w') as f:
+
+
+if args.savePath != None:
+    with open(args.savePath, 'w') as f:
         f.write(json)
 else:
     print(json)
