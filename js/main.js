@@ -1,7 +1,8 @@
 /*********************************************/
 /*    File name: main.js                     */
 /*    Function: Command parsing, processing  */
-/*    Last update: 2022.12.30                */
+/*    Last update: 2023.1.15                 */
+/*    dependencies: jQuery                   */
 /*********************************************/
 
 //我是因为发现中文末尾对不齐才写了个英文的。。。
@@ -9,22 +10,31 @@
 //**************************************
 //    文件名: main.js
 //    功能: 命令解析,处理
-//    最后更新: 2022.12.30
+//    最后更新: 2023.1.15
+//    依赖: jQuery
 //**************************************
 
-//定义命令头
+
+//**************************************
+//    定义变量
+//**************************************
+
+
+//定义命令头，只有包含在里面的命令才会被执行
 const cmd_head = ["help", "update", "cat", "ls", "cd", "clear", "sudo", "mkdir", "vim"]
 
-//定义目录
+//定义当前路径分割后的数组
 var directory = []
-var dir; //目录json
 
-//定义元素
+//目录json，包含所有文件(夹)的信息
+var dir;
+
+//定义主要元素
 const terminal = $("#terminal")[0];
 const input = $("#terminal-input")[0];
 const html = $('body,html');
 
-//定义当前URL
+//定义当前URL，用于提示语
 var host = window.location.hostname;
 if (host == "") host = "localhost";
 
@@ -100,10 +110,12 @@ function run() {
 
 /**
  * **********************************
- * 函数名: run
- * 功能: 获取输入并执行命令
- * 调用位置: keydown
+ * 函数名: parseHTML
+ * 功能: 把传入的字符串解析为HTML对象
+ * 调用位置: Render
  * **********************************
+ * @param {String} html - 需转换的HTML字符串
+ * @returns {Object} - 转换后的HTML对象
  */
 function parseHTML(html) {
     let t = document.createElement('template');
@@ -111,7 +123,14 @@ function parseHTML(html) {
     return t.content;
 }
 
-//保持聚焦
+/**
+ * **********************************
+ * 函数名: refocus
+ * 功能: 在失去焦点时再次获取焦点
+ * 调用位置: Render
+ * **********************************
+ */
+
 function refocus(e) {
     let that = this;
     setTimeout(function () {
@@ -120,7 +139,14 @@ function refocus(e) {
 
 }
 
-//渲染
+/**
+ * **********************************
+ * 函数名: Render
+ * 功能: 在执行命令后渲染新的提示符
+ * 调用位置: keydown
+ * **********************************
+ * @param {String} tag - 运行命令后返回的HTML字符串
+ */
 function Render(tag) {
     //制作输出内容
     let temp = `<span>${input.value}</span><br>${tag}
@@ -134,23 +160,38 @@ function Render(tag) {
     input.value = "";
 }
 
-//处理按键信息
+/**
+ * **********************************
+ * 函数名: keydown
+ * 功能: 处理按键
+ * 调用位置: 输入标签的onkeydown
+ * **********************************
+ * @param {String} tag - 运行命令后返回的HTML字符串
+ */
 function keydown(e) {
     e = e || window.event;
     if (e.keyCode == 13) {
         Render(run());
         Cookies.set('file', JSON.stringify(dir));
     }
-
-    // 历史
-
 }
 
-
+/**
+ * **********************************
+ * 函数名: getCurrentDir
+ * 功能: 获取相应路径的对象
+ * 调用位置: 大部分命令
+ * **********************************
+ * @param {Object} d - 解析的来源，大部分时候是全局变量dir，仅为方便递归
+ * @param {Array} path - 需要获取的路径分割后的数组，仅可为绝对路径(可调用getRealPath来将相对路径转为绝对路径)
+ * @param {boolean} noPath - 如果为真，表示可能不存在此路径，需创建
+ * @param {boolean} file - 是否为文件
+ */
 function getCurrentDir(d, path, noPath = false, file = false) {
     //console.log([d,path]);
     if (path.length == 0) return dir;
     let name = getAllName(d["data"]);
+
     if (name.includes(path[0])) {
         let l = name.indexOf(path[0]);
         console.log(name);
@@ -172,6 +213,14 @@ function getCurrentDir(d, path, noPath = false, file = false) {
 
 }
 
+/**
+ * **********************************
+ * 函数名: getRealPath
+ * 功能:将相对路径及字符串转为绝对路径
+ * 调用位置: 大部分命令
+ * **********************************
+ * @param d - 需转换的字符串或数组
+ */
 function getRealPath(d) {
     if (typeof d == typeof "") {
         //相对路径
@@ -190,11 +239,6 @@ function getRealPath(d) {
     return d;
 }
 
-function readFile(path) {
-    let d = getCurrentDir(dir, path.slice(0, -1));
-    let name = getAllName_Data(d["data"]);
-    return name[path.slice(-1)]["data"];
-}
 
 //获取所有名称
 function getAllName_Data(data) {
@@ -266,7 +310,7 @@ function clear(argv) {
 
 function cat(argv) {
     let p = getRealPath(argv[0]);
-    let text = readFile(p);
+    let text = getCurrentDir(dir, p, false, true)['data'];
     return `<span style="white-space: pre;">${text}</span><br>`;
 }
 
@@ -297,7 +341,7 @@ function vim(argv) {
     };
     let editor = CodeMirror(document.body,
         {
-            value: readFile(getRealPath(argv[0])),
+            value: getCurrentDir(dir, getRealPath(argv[0]), false, true), //获取文件内容
             lineNumbers: true,
             mode: mode,
             keyMap: "vim",
