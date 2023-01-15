@@ -88,8 +88,11 @@ function run() {
     //获取输入的数值
     let script = input.value;
     if (script == "") return "";
+
+    terminal.insertBefore(parseHTML(`<span>${input.value}</span>`), input);
     //按空格分割
     script = script.split(" ");
+
     //去除空字符串
     script = script.filter((x) => x !== '');
 
@@ -149,7 +152,7 @@ function refocus(e) {
  */
 function Render(tag) {
     //制作输出内容
-    let temp = `<span>${input.value}</span><br>${tag}
+    let temp = `<br>${tag}
         <span class="prefix">[<span id="usr">usr</span>@<span class="host">${host}</span> <span
         id="directory">${"/" + directory.join("/")}</span>]<span id="pos">$</span></span>`;
     let div = parseHTML(temp); //解析字符串为HTML
