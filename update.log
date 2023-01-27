@@ -20,4 +20,10 @@
     完善makeData.py的参数解析
     完善main.js的jsDoc
     隐藏滚动条
+    优化vim
+2.3 (2023/1/27)
+    添加部分多语言支持
+    修复命令函数中报错问题
+    修改命令执行方式(eval -> Function)
+    修复BUG
     
