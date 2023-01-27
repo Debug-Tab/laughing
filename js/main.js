@@ -38,6 +38,32 @@ const html = $('body,html');
 var host = window.location.hostname;
 if (host == "") host = "localhost";
 
+//当前语言
+var language = "zh-cn";
+
+//多语言支持
+var languageData = {
+    'error': {
+        'zh-cn': '错误: ',
+        'en-us': 'Error: '
+    },
+
+    'tryCookie': {
+        'zh-cn': '尝试从Cookie中读取文件数据',
+        'en-us': 'Try to read the file data in cookie'
+    },
+
+    'tryCookieError': {
+        'zh-cn': '错误: 无法从Cookie中读取到正确的文件数据\nCookie:\n',
+        'en-us': 'Error: Unable to read the correct file data from the Cookie.\nCookie:\n'
+    },
+
+    'unableFind': {
+        'zh-cn': '无法找到 ',
+        'en-us': 'Unable to find '
+    }
+}
+
 
 /**
  * **********************************
@@ -65,10 +91,10 @@ if (Cookies.get('file') == undefined) {
     getJson();
 } else {
     try {
-        console.log("Try to read the data in cookie")
-        dir = JSON.parse(unescape(Cookies.get('file')));
+        console.log(languageData['tryCookie'][language])
+        dir = JSON.parse(decodeURI(Cookies.get('file')));
     } catch (err) {
-        console.log(`Error: cannot read the real data in cookie.\nCookie:${document.cookie}`);
+        console.log(languageData['tryCookieError'][language]+document.cookie);
         getJson();
     }
 }
@@ -102,13 +128,21 @@ function run() {
     if (script[0] == "sudo") script = script.slice(1);
     //如果命令不存在
     if (!cmd_head.includes(script[0]) || !script) {
-        return `<span style="color: red">Error:</span>
-            <span style="color: #FF5555;text-decoration: underline">${script[0]}</span>
-            <span style="color: red">is not defined</span><br>`;
+        return `
+            <span style="color: red">
+                ${languageData['error'][language]+languageData['unableFind'][language]}
+            </span>
+            <span style="color: red">
+                ${script[0]}
+            </span><br>`;
     }
     console.log(`return ${script[0]}(script.slice(1))`);
     //return new Function(`return ${script[0]}(script.slice(1))`)();
-    return eval(`${script[0]}(script.slice(1))`);
+    try {
+        return eval(`${script[0]}(script.slice(1))`);
+    } catch (err) {
+        return ` <span style="color: red">${err}</span><br>`
+    }
 }
 
 
