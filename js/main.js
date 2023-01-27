@@ -61,6 +61,26 @@ var languageData = {
     'unableFind': {
         'zh-cn': '无法找到 ',
         'en-us': 'Unable to find '
+    },
+
+    'runCmd': {
+        'zh-cn': '运行命令: ',
+        'en-us': 'Run command: '
+    },
+
+    'argError': {
+        'zh-cn': '传入参数数量应为',
+        'en-us': 'The number of incoming parameters should be '
+    },
+
+    'notFound': {
+        'zh-cn': '无法找到对应的文件或文件夹',
+        'en-us': 'No such file or directory.'
+    },
+
+    'notFolder': {
+        'zh-cn': '不是一个文件夹',
+        'en-us': ' is not a folder.'
     }
 }
 
@@ -73,7 +93,7 @@ var languageData = {
  */
 function getJson() {
     $.ajax({
-        url: "data.json",
+        url: "../data.json",
         type: "GET",
         dataType: "json",
         success:
@@ -94,7 +114,7 @@ if (Cookies.get('file') == undefined) {
         console.log(languageData['tryCookie'][language])
         dir = JSON.parse(decodeURI(Cookies.get('file')));
     } catch (err) {
-        console.log(languageData['tryCookieError'][language]+document.cookie);
+        console.log(languageData['tryCookieError'][language] + document.cookie);
         getJson();
     }
 }
@@ -123,23 +143,23 @@ function run() {
     script = script.filter((x) => x !== '');
 
     //输出
-    console.log(`Run script:${script}`);
+    console.log(languageData['runCmd'][language] + script);
 
     if (script[0] == "sudo") script = script.slice(1);
     //如果命令不存在
     if (!cmd_head.includes(script[0]) || !script) {
         return `
             <span style="color: red">
-                ${languageData['error'][language]+languageData['unableFind'][language]}
+                ${languageData['error'][language] + languageData['unableFind'][language]}
             </span>
             <span style="color: red">
                 ${script[0]}
             </span><br>`;
     }
-    console.log(`return ${script[0]}(script.slice(1))`);
-    //return new Function(`return ${script[0]}(script.slice(1))`)();
+
     try {
-        return eval(`${script[0]}(script.slice(1))`);
+        return new Function(`return ${script[0]}(${JSON.stringify(script.slice(1))})`)();
+        //return eval(`${script[0]}(script.slice(1))`);
     } catch (err) {
         return ` <span style="color: red">${err}</span><br>`
     }
@@ -164,7 +184,7 @@ function parseHTML(html) {
 /**
  * **********************************
  * 函数名: refocus
- * 功能: 在失去焦点时再次获取焦点(暂时停用)
+ * 功能: 在失去焦点时再次获取焦点(用于输入框，暂时停用)
  * **********************************
  */
 function refocus(e) {
@@ -185,7 +205,8 @@ function refocus(e) {
  */
 function Render(tag) {
     //制作输出内容
-    let temp = `<br>${tag}
+    let temp = `
+        <br>${tag}
         <span class="prefix">[<span id="usr">usr</span>@<span class="host">${host}</span> <span
         id="directory">${"/" + directory.join("/")}</span>]<span id="pos">$</span></span>`;
     let div = parseHTML(temp); //解析字符串为HTML
@@ -239,7 +260,7 @@ function getData(d, path, noPath = false, file = false) {
     if (noPath) {
         let temp = {
             "name": path.slice(-1)[0],
-            "data": file ? "":[] //如果是文件则data为字符串
+            "data": file ? "" : [] //如果是文件则data为字符串
         };
         d["data"].push(temp); //在最后添加
         return d["data"][temp];
@@ -319,7 +340,7 @@ function getAllName(data) {
  */
 function cd(argv) {
     if (argv.length != 1) {
-        return `<span style="color: red">Error: too many arguments to cd</span><br>`
+        return `<span style="color: red">${languageData['error'][language] + languageData['argError'][language] + "1"}</span><br>`
     }
 
     //获取需切换目录的信息，主要用于判断是否存在
@@ -328,9 +349,9 @@ function cd(argv) {
 
 
     if (pathData == -1) {    //如果目标不存在
-        return `<span style="color: red">Error: No such file or directory.</span><br>`;
+        return `<span style="color: red">${languageData['error'][language] + languageData['notFound'][language]}</span><br>`;
     } else if (pathData == -2) {   //如果目标为文件
-        return `<span style="color: red">Error: "${argv[0]}" is not a folder.</span><br>`
+        return `<span style="color: red">${languageData['error'][language] + argv[0] + languageData['notFolder'][language]}</span><br>`
     } else {
         directory = path;
         return "";
