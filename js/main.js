@@ -21,7 +21,7 @@
 
 
 //定义命令头，只有包含在里面的命令才会被执行
-const cmd_head = ["help", "update", "cat", "ls", "cd", "clear", "sudo", "mkdir", "vim"]
+const cmd_head = ["help", "update", "cat", "ls", "cd", "clear", "mkdir", "vim"]
 
 //定义当前路径分割后的数组
 var directory = []
@@ -81,6 +81,11 @@ var languageData = {
     'notFolder': {
         'zh-cn': '不是一个文件夹',
         'en-us': ' is not a folder.'
+    },
+
+    'updateData': {
+        'zh-cn': '已成功更新Cookie缓存的data.json',
+        'en-us': 'Successfully updated the data.json of the Cookie cache'
     }
 }
 
@@ -135,7 +140,12 @@ function run() {
     let script = input.value;
     if (script == "") return "";
 
-    terminal.insertBefore(parseHTML(`<span>${input.value}</span>`), input);
+    //在输入框前加入输入的内容
+    terminal.insertBefore(parseHTML(`<span>${script}</span>`), input);
+
+    //清空输入框
+    input.value = "";
+
     //按空格分割
     script = script.split(" ");
 
@@ -145,15 +155,14 @@ function run() {
     //输出
     console.log(languageData['runCmd'][language] + script);
 
+    //忽略sudo
     if (script[0] == "sudo") script = script.slice(1);
+
     //如果命令不存在
     if (!cmd_head.includes(script[0]) || !script) {
         return `
             <span style="color: red">
-                ${languageData['error'][language] + languageData['unableFind'][language]}
-            </span>
-            <span style="color: red">
-                ${script[0]}
+                ${languageData['error'][language] + languageData['unableFind'][language] + script[0]}
             </span><br>`;
     }
 
@@ -204,17 +213,15 @@ function refocus(e) {
  * @param {String} tag - 运行命令后返回的HTML字符串
  */
 function Render(tag) {
-    //制作输出内容
+    //合并输出内容
     let temp = `
         <br>${tag}
         <span class="prefix">[<span id="usr">usr</span>@<span class="host">${host}</span> <span
         id="directory">${"/" + directory.join("/")}</span>]<span id="pos">$</span></span>`;
+
     let div = parseHTML(temp); //解析字符串为HTML
-    //console.log(div);
     terminal.insertBefore(div, input);
     html.animate({scrollTop: $(document).height()}, 0);
-    //清空
-    input.value = "";
 }
 
 
@@ -258,12 +265,13 @@ function getData(d, path, noPath = false, file = false) {
         return -2;
     }
     if (noPath) {
-        let temp = {
+        let data = {
             "name": path.slice(-1)[0],
             "data": file ? "" : [] //如果是文件则data为字符串
         };
-        d["data"].push(temp); //在最后添加
-        return d["data"][temp];
+        d["data"].push(data); //在最后添加
+
+        return d["data"][d["data"].length-1];
     }
     return -1;
 
@@ -404,29 +412,40 @@ function mkdir(argv) {
 function update(argv) {
     getJson();
     directory = [];
-    return "<span>Updating data.json!</span><br>";
+    return `<span>${languageData['updateData'][language]}</span><br>`;
 }
 
 function vim(argv) {
+    //通过判断后缀来实现高亮
     let extensions = {
-        "md": "markdown",
-        "py": "python"
+        'md': 'markdown',
+        'py': 'python',
+        'txt': 'null'
     };
-    let mode = argv[0].split(".").slice(-1)[0];
-    mode = (mode in extensions) ? extensions[mode] : "null";
+
+    let mode = argv[0].split(".").slice(-1)[0]; //获取后缀
+    mode = (mode in extensions) ? extensions[mode] : "null"; //获取模式
+
     console.log(mode);
 
-    //隐藏其他界面
-    terminal.setAttribute("style", "display:none;");
+    //设置保存函数
     CodeMirror.commands.save = function (e) {
         terminal.setAttribute("style", "");
         getData(dir, getRealPath(argv[0]), true, true)["data"] = editor.getValue();
         $(".CodeMirror").remove();
     };
 
+    //获取需读取的文件内容
+    let fileContent = getData(
+        dir,
+        getRealPath(argv[0]),
+        true,
+        true
+    )['data'];
+
     let editor = CodeMirror(document.body,
         {
-            value: getData(dir, getRealPath(argv[0]), false, true)['data'], //获取文件内容
+            value: fileContent,
             lineNumbers: true,
             mode: mode,
             keyMap: "vim",
@@ -437,5 +456,9 @@ function vim(argv) {
         }
     );
     editor.focus()
+
+    //隐藏终端界面
+    terminal.setAttribute("style", "display:none;");
+
     return "<br>"
 }
