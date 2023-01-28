@@ -90,6 +90,32 @@ var languageData = {
 }
 
 
+//**************************************
+//    主程序
+//**************************************
+
+function main() {
+    //操控Cookie，使用Js-cookie(已在index.html中引入)
+    if (Cookies.get('file') == undefined) {
+        getJson();
+    } else {
+        try {
+            console.log(languageData['tryCookie'][language])
+            dir = JSON.parse(decodeURI(Cookies.get('file')));
+        } catch (err) {
+            console.log(languageData['tryCookieError'][language] + document.cookie);
+            getJson();
+        }
+    }
+    for (let i of document.getElementsByClassName("host")) {
+        i.innerHTML = host;
+    }
+
+    input.addEventListener('blur', refocus);
+    input.addEventListener('keydown', keydown);
+}
+main()
+
 /**
  * **********************************
  * 函数名: getJson
@@ -109,22 +135,6 @@ function getJson() {
             }
     });
 
-}
-
-//操控Cookie，使用Js-cookie(已在index.html中引入)
-if (Cookies.get('file') == undefined) {
-    getJson();
-} else {
-    try {
-        console.log(languageData['tryCookie'][language])
-        dir = JSON.parse(decodeURI(Cookies.get('file')));
-    } catch (err) {
-        console.log(languageData['tryCookieError'][language] + document.cookie);
-        getJson();
-    }
-}
-for (let i of document.getElementsByClassName("host")) {
-    i.innerHTML = host;
 }
 
 
@@ -196,7 +206,7 @@ function parseHTML(html) {
  * 功能: 在失去焦点时再次获取焦点(用于输入框，暂时停用)
  * **********************************
  */
-function refocus(e) {
+function refocus() {
     let that = this;
     setTimeout(function () {
         //document.getElementById("terminal-input").focus();
