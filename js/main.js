@@ -41,6 +41,12 @@ if (host == "") host = "localhost";
 //当前语言
 var language = "zh-cn";
 
+//语言名称
+languageName = {
+    'zh-cn': ['中文', 'red'],
+    'en-us': ['English', 'deepskyblue']
+}
+
 //多语言支持
 var languageData = {
     'error': {
@@ -109,6 +115,17 @@ function main() {
     }
     for (let i of document.getElementsByClassName("host")) {
         i.innerHTML = host;
+    }
+
+    let welcome = $("#welcome")[0]
+    for (let k in languageName) {
+        let temp = `<a 
+                        href="javascript:void(0);" 
+                        onclick="language='${k}'" 
+                        style="color: ${languageName[k][1]}"
+                    >${languageName[k][0]}</a>
+                    <p>&nbsp;</p>`
+        welcome.appendChild(parseHTML(temp))
     }
 
     input.addEventListener('blur', refocus);
@@ -180,7 +197,7 @@ function run() {
         return new Function(`return ${script[0]}(${JSON.stringify(script.slice(1))})`)();
         //return eval(`${script[0]}(script.slice(1))`);
     } catch (err) {
-        return ` <span style="color: red">${err}</span><br>`
+        return `<span style="color: red">${err}</span><br>`
     }
 }
 

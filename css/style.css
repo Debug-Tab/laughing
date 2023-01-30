@@ -19,6 +19,12 @@ input {
     color: white;
 }
 
+#welcome > span {
+    display: inline-block;
+    font-size: 17px;
+    color: white;
+}
+
 p {
     display: inline-block;
     font-size: 17px;
@@ -43,4 +49,11 @@ p {
 
 #pos {
     color: #FF5555 !important;
+}
+
+.text-gradient {
+    background-image: linear-gradient(to right, orange, purple);
+    -webkit-background-clip: text;
+    color: transparent;
+    font-size: 30px;
 }
