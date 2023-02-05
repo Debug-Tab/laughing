@@ -42,7 +42,7 @@ if (host == "") host = "localhost";
 var language = "zh-cn";
 
 //语言名称
-languageName = {
+var languageName = {
     'zh-cn': ['中文', 'red'],
     'en-us': ['English', 'deepskyblue']
 }
