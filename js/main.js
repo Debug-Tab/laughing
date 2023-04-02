@@ -95,6 +95,7 @@ var languageData = {
     }
 }
 
+var include = []
 
 //**************************************
 //    主程序
@@ -131,6 +132,7 @@ function main() {
     input.addEventListener('blur', refocus);
     input.addEventListener('keydown', keydown);
 }
+
 main()
 
 /**
@@ -194,7 +196,26 @@ function run() {
     }
 
     try {
-        return new Function(`return ${script[0]}(${JSON.stringify(script.slice(1))})`)();
+        /*
+        console.log(getData(dir,
+                     ['bin', script[0] + '.js'],
+                     false,
+                     true)['data'] + `\nr = ${script[0]}(${JSON.stringify(script.slice(1))})`);
+        */
+
+        let r; //返回内容
+        if(!(include.includes(script[0]))){
+            console.log(`Load ${script[0] + '.js'}`);
+            eval(getData(dir,
+                ['bin', script[0] + '.js'],
+                false,
+                true)['data']
+            );
+        }
+        eval(`r = ${script[0]}(${JSON.stringify(script.slice(1))})`)
+
+        return r;
+        //return new Function(`return ${script[0]}(${JSON.stringify(script.slice(1))})`)();
         //return eval(`${script[0]}(script.slice(1))`);
     } catch (err) {
         return `<span style="color: red">${err}</span><br>`
@@ -298,7 +319,7 @@ function getData(d, path, noPath = false, file = false) {
         };
         d["data"].push(data); //在最后添加
 
-        return d["data"][d["data"].length-1];
+        return d["data"][d["data"].length - 1];
     }
     return -1;
 
@@ -364,128 +385,10 @@ function getAllName(data) {
     return name;
 }
 
-
-/**
- * **********************************
- * 函数名: cd
- * 功能: 尝试切换到指定目录(修改全局变量directory)
- * **********************************
- * @param {Array} argv - 参数
- * @returns {String}
- */
-function cd(argv) {
-    if (argv.length != 1) {
-        return `<span style="color: red">${languageData['error'][language] + languageData['argError'][language] + "1"}</span><br>`
-    }
-
-    //获取需切换目录的信息，主要用于判断是否存在
-    let path = getRealPath(argv[0]);
-    let pathData = getData(dir, path);
+//**************************************
+//    命令
+//    声明：由于已经将命令移至command文件夹
+//    请忽略以下内容
+//**************************************
 
 
-    if (pathData == -1) {    //如果目标不存在
-        return `<span style="color: red">${languageData['error'][language] + languageData['notFound'][language]}</span><br>`;
-    } else if (pathData == -2) {   //如果目标为文件
-        return `<span style="color: red">${languageData['error'][language] + argv[0] + languageData['notFolder'][language]}</span><br>`
-    } else {
-        directory = path;
-        return "";
-    }
-}
-
-
-function ls(argv) {
-    let Cdir = getData(dir, directory);
-    let name = getAllName_Data(Cdir["data"]);
-    let dirList = [], fileList = [];
-    for (let t in name) {
-        if (typeof name[t]["data"] == typeof []) {
-            //dirList.push(name[t]);
-            dirList.push(t);
-        } else {
-            //fileList.push(name[t]);
-            fileList.push(t);
-        }
-    }
-    console.log(dirList, fileList);
-    return `<span style="color: yellow">${dirList.join(" ")}</span>
-            <span style="color: deepskyblue">${fileList.join(" ")}</span><br>`;
-}
-
-function clear(argv) {
-    var child = terminal.firstChild;
-    var last = terminal.lastChild;
-    var t;
-    while (child != last) {
-        t = child;
-        child = child.nextSibling;
-        if (t.tagName != "INPUT" && t.tagName != "SCRIPT") t.remove();
-    }
-    return "";
-}
-
-
-function cat(argv) {
-    let p = getRealPath(argv[0]);
-    let text = getData(dir, p, false, true)['data'];
-    return `<span style="white-space: pre;">${text}</span><br>`;
-}
-
-function mkdir(argv) {
-    getData(dir, getRealPath(argv[0]), true)
-    return "";
-}
-
-function update(argv) {
-    getJson();
-    directory = [];
-    return `<span>${languageData['updateData'][language]}</span><br>`;
-}
-
-function vim(argv) {
-    //通过判断后缀来实现高亮
-    let extensions = {
-        'md': 'markdown',
-        'py': 'python',
-        'txt': 'null'
-    };
-
-    let mode = argv[0].split(".").slice(-1)[0]; //获取后缀
-    mode = (mode in extensions) ? extensions[mode] : "null"; //获取模式
-
-    console.log(mode);
-
-    //设置保存函数
-    CodeMirror.commands.save = function (e) {
-        terminal.setAttribute("style", "");
-        getData(dir, getRealPath(argv[0]), true, true)["data"] = editor.getValue();
-        $(".CodeMirror").remove();
-    };
-
-    //获取需读取的文件内容
-    let fileContent = getData(
-        dir,
-        getRealPath(argv[0]),
-        true,
-        true
-    )['data'];
-
-    let editor = CodeMirror(document.body,
-        {
-            value: fileContent,
-            lineNumbers: true,
-            mode: mode,
-            keyMap: "vim",
-            matchBrackets: true,
-            showCursorWhenSelecting: true,
-            inputStyle: "contenteditable",
-            theme: "ayu-mirage"
-        }
-    );
-    editor.focus()
-
-    //隐藏终端界面
-    terminal.setAttribute("style", "display:none;");
-
-    return "<br>"
-}

@@ -53,8 +53,8 @@ p {
 }
 
 .text-gradient {
-    background: white; /*兼容旧浏览器*/
-    background-image: linear-gradient( 135deg, #FD6585 10%, #0D25B9 100%);
+    background: white; /* 兼容旧浏览器 */
+    background-image: linear-gradient(135deg, #FD6585 10%, #0D25B9 100%);
     -webkit-background-clip: text;
     color: transparent;
 }
