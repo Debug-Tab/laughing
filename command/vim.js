@@ -11,22 +11,27 @@ function vim(argv) {
 
     console.log(mode);
 
+    let filePath = getRealPath(argv[0])
     //设置保存函数
     CodeMirror.commands.save = function (e) {
         terminal.setAttribute("style", "");
-        getData(dir, getRealPath(argv[0]), true, true)["data"] = editor.getValue();
+        getData(dir, filePath, true, true);
+        let dPath = filePath.slice(0, -1);
+        console.log(dPath, getData(dir, dPath), filePath);
+        getData(dir, dPath)[filePath[filePath.length-1]] = editor.getValue();
         $(".CodeMirror").remove();
     };
 
     //获取需读取的文件内容
     let fileContent = getData(
         dir,
-        getRealPath(argv[0]),
+        filePath,
         true,
         true
-    )['data'];
+    );
 
-    let editor = CodeMirror(document.body,
+    let editor = CodeMirror(
+        document.body,
         {
             value: fileContent,
             lineNumbers: true,

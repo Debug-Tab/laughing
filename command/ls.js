@@ -1,14 +1,12 @@
 function ls(argv) {
-    let Cdir = getData(dir, directory);
-    let name = getAllName_Data(Cdir["data"]);
+    let d = getData(dir, directory);
     let dirList = [], fileList = [];
-    for (let t in name) {
-        if (typeof name[t]["data"] == typeof []) {
-            //dirList.push(name[t]);
-            dirList.push(t);
+    for (let key in d) {
+        if (typeof d[key] == typeof {}) {
+            dirList.push(key);
         } else {
             //fileList.push(name[t]);
-            fileList.push(t);
+            fileList.push(key);
         }
     }
     console.log(dirList, fileList);

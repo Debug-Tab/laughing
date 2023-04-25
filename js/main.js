@@ -21,7 +21,7 @@
 
 
 //定义命令头，只有包含在里面的命令才会被执行
-const cmd_head = ["help", "update", "cat", "ls", "cd", "clear", "mkdir", "vim"]
+const cmd_head = ["help", "update", "cat", "ls", "cd", "clear", "mkdir", "vim", "help"]
 
 //定义当前路径分割后的数组
 var directory = []
@@ -181,7 +181,7 @@ function run() {
     //去除空字符串
     script = script.filter((x) => x !== '');
 
-    //输出
+    //输出日志
     console.log(languageData['runCmd'][language] + script);
 
     //忽略sudo
@@ -195,21 +195,14 @@ function run() {
             </span><br>`;
     }
 
-    try {
-        /*
-        console.log(getData(dir,
-                     ['bin', script[0] + '.js'],
-                     false,
-                     true)['data'] + `\nr = ${script[0]}(${JSON.stringify(script.slice(1))})`);
-        */
-
+    //try {
         let r; //返回内容
         if(!(include.includes(script[0]))){
             console.log(`Load ${script[0] + '.js'}`);
             eval(getData(dir,
                 ['bin', script[0] + '.js'],
                 false,
-                true)['data']
+                true)
             );
         }
         eval(`r = ${script[0]}(${JSON.stringify(script.slice(1))})`)
@@ -217,9 +210,9 @@ function run() {
         return r;
         //return new Function(`return ${script[0]}(${JSON.stringify(script.slice(1))})`)();
         //return eval(`${script[0]}(script.slice(1))`);
-    } catch (err) {
-        return `<span style="color: red">${err}</span><br>`
-    }
+    //} catch (err) {
+    //    return `<span style="color: red">${err}</span><br>`
+    //}
 }
 
 
@@ -300,26 +293,25 @@ function keydown(e) {
  */
 function getData(d, path, noPath = false, file = false) {
     //console.log([d,path]);
-    if (path.length == 0) return dir;
-    let name = getAllName(d["data"]);
+    if (path.length == 0) return d;
+    let name = Object.keys(d);
 
-    if (name.includes(path[0])) { //如果存在目标文件
-        let l = name.indexOf(path[0]);
+    if (name.includes(path[0])) {   //如果存在目标文件
         console.log(name);
-        if ((typeof d["data"][l]["data"] == typeof []) || file) {
-            return path.length == 1 ? d["data"][l] : getData(d["data"][l], path.slice(1), noPath, file);
+        if ((typeof d[path[0]] == typeof {}) || file) {
+            return path.length == 1 ? d[path[0]] : getData(d[path[0]], path.slice(1), noPath, file);
         }
         console.log(file)
         return -2;
     }
     if (noPath) {
-        let data = {
-            "name": path.slice(-1)[0],
-            "data": file ? "" : [] //如果是文件则data为字符串
-        };
-        d["data"].push(data); //在最后添加
-
-        return d["data"][d["data"].length - 1];
+        if (path.length == 1){
+            d[path[0]] = file ? "" : {}; //如果是文件则data为字符串
+            return d[path[0]];
+        }
+        else {
+            return getData(d[path[0]], path.slice(1), noPath, file);
+        }
     }
     return -1;
 
@@ -353,42 +345,8 @@ function getRealPath(path) {
 }
 
 
-/**
- * **********************************
- * 函数名: getAllName_Data
- * 功能: 获取传入的data中所有文件(夹)的名字及其数据
- * **********************************
- * @param {Array} data - 文件夹数据中的Data
- * @returns {Object} - 字典，key对应名字，value对应数据
- */
-function getAllName_Data(data) {
-    let name = {};
-    for (let l = 0; l < data.length; l++) {
-        name[data[l]["name"]] = data[l];
-    }
-    return name;
+function update(argv) {
+    getJson();
+    directory = [];
+    return `<span>${languageData['updateData'][language]}</span><br>`;
 }
-
-/**
- * **********************************
- * 函数名: getAllName
- * 功能: 获取传入的data中所有文件(夹)的名字
- * **********************************
- * @param {Array} data - 文件夹数据中的Data
- * @returns {Array} - 有序数组，所有文件(夹)的名字
- */
-function getAllName(data) {
-    let name = [];
-    for (let l = 0; l < data.length; l++) {
-        name.push(data[l]["name"]);
-    }
-    return name;
-}
-
-//**************************************
-//    命令
-//    声明：由于已经将命令移至command文件夹
-//    请忽略以下内容
-//**************************************
-
-
