@@ -5,8 +5,6 @@
 /*    dependencies: jQuery                   */
 /*********************************************/
 
-//我是因为发现中文末尾对不齐才写了个英文的。。。
-
 //**************************************
 //    文件名: main.js
 //    功能: 命令解析,处理
@@ -131,6 +129,25 @@ function main() {
 
     input.addEventListener('blur', refocus);
     input.addEventListener('keydown', keydown);
+
+    /*
+    jQuery(function($, undefined) {
+        $('#terminal-input').terminal(function(command) {
+            if (command !== '') {
+                var result = window.eval(command);
+                if (result != undefined) {
+                    this.echo(String(result));
+                }
+            }
+        }, {
+            greetings: 'Javascript Interpreter',
+            name: 'js_demo',
+            height: 200,
+            width: 450,
+            prompt: 'js> '
+        });
+    });
+    */
 }
 
 main()

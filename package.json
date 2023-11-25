@@ -1,0 +1,28 @@
+{
+  "name": "laughing",
+  "version": "4.0.0",
+  "description": "A imitating Linux terminal based on Javascript",
+  "main": "index.js",
+  "scripts": {
+    "test": "start http://localhost:5739 && python -m http.server 5739"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Debug-Tab/laughing.git"
+  },
+  "keywords": [
+    "terminal",
+    "javascript",
+    "linux"
+  ],
+  "author": "Tabmax",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/Debug-Tab/laughing/issues"
+  },
+  "homepage": "https://github.com/Debug-Tab/laughing#readme",
+  "dependencies": {
+    "xterm": "^5.1.0",
+    "xterm-addon-fit": "^0.7.0"
+  }
+}
