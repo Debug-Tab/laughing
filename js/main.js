@@ -222,7 +222,8 @@ function run() {
                 true)
             );
         }
-        eval(`r = ${script[0]}(${JSON.stringify(script.slice(1))})`)
+        Output("<br>");
+        eval(`r = ${script[0]}(${JSON.stringify(script.slice(1))})`);
 
         return r;
         //return new Function(`return ${script[0]}(${JSON.stringify(script.slice(1))})`)();
@@ -265,6 +266,18 @@ function refocus() {
 
 /**
  * **********************************
+ * 函数名: Output
+ * 功能: 在执行命令后渲染新的提示符
+ * **********************************
+ * @param {String} str - 需输出的HTML字符串
+ */
+function Output(str) {
+    let div = parseHTML(str);//解析字符串为HTML
+    terminal.insertBefore(div, input);
+}
+
+/**
+ * **********************************
  * 函数名: Render
  * 功能: 在执行命令后渲染新的提示符
  * **********************************
@@ -273,12 +286,11 @@ function refocus() {
 function Render(tag) {
     //合并输出内容
     let temp = `
-        <br>${tag}
+        ${tag}
         <span class="prefix">[<span id="usr">usr</span>@<span class="host">${host}</span> <span
         id="directory">${"/" + directory.join("/")}</span>]<span id="pos">$</span></span>`;
 
-    let div = parseHTML(temp); //解析字符串为HTML
-    terminal.insertBefore(div, input);
+    Output(temp);
     html.animate({scrollTop: $(document).height()}, 0);
 }
 

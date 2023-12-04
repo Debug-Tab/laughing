@@ -1,6 +1,6 @@
 function help(argv) {
-    return `
-<span style="white-space: pre-wrap; word-wrap: break-word">
+    Output(
+`<span style="white-space: pre-wrap; word-wrap: break-word">
 一个简易的Javascript仿写Linux命令行
 
 命令:
@@ -12,6 +12,6 @@ function help(argv) {
     clear 清屏
     mkdir &lt;path&gt; 创建文件夹
     vim 修改文件，请使用 :w 退出(不带q)
-</span><br>
-`;
+</span>`);
+    return '<br>';
 }

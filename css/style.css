@@ -6,21 +6,15 @@ body {
 input {
     border-width: 0;
     outline: none;
-    background-color: rgba(0, 0, 0, 0);
+    background-color: transparent;  /* 透明rgba(0, 0, 0, 0) */
     width: 666px;
     height: 20px;
-    font-size: 18px;
+    font-size: 18px;                /* 字体大小 */
     color: white;
     display: inline-block;
 }
 
-#terminal > span {
-    display: inline-block;
-    font-size: 17px;
-    color: white;
-}
-
-#welcome > span {
+#terminal span {
     display: inline-block;
     font-size: 17px;
     color: white;
