@@ -22,6 +22,6 @@ function cd(argv) {
         return `<span style="color: red">${languageData['error'][language] + argv[0] + languageData['notFolder'][language]}</span><br>`
     } else {
         directory = path;
-        return "";
+        return "<br>";
     }
 }

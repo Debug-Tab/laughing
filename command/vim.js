@@ -1,4 +1,8 @@
 function vim(argv) {
+    if (argv.length == 0) {
+        return `<span style="color: red">${SyntaxError(languageData['parameterError'][language])}</span><br>`;
+    }
+    
     //通过判断后缀来实现高亮
     let extensions = {
         'md': 'markdown',

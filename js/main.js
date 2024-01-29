@@ -90,7 +90,17 @@ var languageData = {
     'updateData': {
         'zh-cn': '已成功更新Cookie缓存的data.json',
         'en-us': 'Successfully updated the data.json of the Cookie cache'
-    }
+    },
+
+    'syntaxError': {
+        'zh-cn': '语法错误',
+        'en-us': 'SyntaxError'
+    },
+
+    'parameterError': {
+        'zh-cn': '参数异常',
+        'en-us': 'Error: Parameter Error'
+    },
 }
 
 var include = []
@@ -173,6 +183,17 @@ function getJson() {
 
 }
 
+/**
+ * **********************************
+ * 函数名: getData
+ * 功能: 获取相应路径的对象
+ * **********************************
+ * @param {Object} d - 解析的来源，大部分时候是全局变量dir，仅为方便递归
+ * @param {Array} path - 需要获取的路径分割后的数组，仅可为绝对路径(可使用getRealPath来将相对路径转为绝对路径)
+ * @param {boolean} noPath - 如果为真，表示可能不存在此路径，需创建
+ * @param {boolean} file - 是否为文件
+ */
+
 
 /**
  * **********************************
@@ -184,7 +205,7 @@ function getJson() {
 function run() {
     //获取输入的数值
     let script = input.value;
-    if (script == "") return "";
+    if (script == "") return "<br>";
 
     //在输入框前加入输入的内容
     terminal.insertBefore(parseHTML(`<span>${script}</span>`), input);
@@ -288,7 +309,8 @@ function Render(tag) {
     let temp = `
         ${tag}
         <span class="prefix">[<span id="usr">usr</span>@<span class="host">${host}</span> <span
-        id="directory">${"/" + directory.join("/")}</span>]<span id="pos">$</span></span>`;
+        id="directory">${"/" + directory.join("/")}</span>]<span id="pos">&gt;
+        </span></span>`;
 
     Output(temp);
     html.animate({scrollTop: $(document).height()}, 0);
