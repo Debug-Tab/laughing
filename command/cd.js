@@ -1,14 +1,15 @@
 /**
  * **********************************
  * 函数名: cd
- * 功能: 尝试切换到指定目录(修改全局变量directory)
+ * 功能: 切换到指定目录(修改全局变量directory)
  * **********************************
- * @param {Array} argv - 参数
- * @returns {String}
+ * @param {Array} argv - 参数(路径)
+ * @returns {String} - HTML文本
  */
+
 function cd(argv) {
     if (argv.length != 1) {
-        return `<span style="color: red">${languageData['error'][language] + languageData['argError'][language] + "1"}</span><br>`
+        return `<span style="color: red">${SyntaxError(languageData['parameterError'][language])}</span><br>`;
     }
 
     //获取需切换目录的信息，主要用于判断是否存在

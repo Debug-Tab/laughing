@@ -1,8 +1,17 @@
+/**
+ * **********************************
+ * 函数名: vim
+ * 功能: 编辑文件
+ * **********************************
+ * @param {Array} argv - 参数(文件路径)
+ * @returns {String} - HTML文本
+ */
+
 function vim(argv) {
     if (argv.length == 0) {
         return `<span style="color: red">${SyntaxError(languageData['parameterError'][language])}</span><br>`;
     }
-    
+
     //通过判断后缀来实现高亮
     let extensions = {
         'md': 'markdown',

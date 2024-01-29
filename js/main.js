@@ -19,7 +19,7 @@
 
 
 //定义命令头，只有包含在里面的命令才会被执行
-const cmd_head = ["help", "update", "cat", "ls", "cd", "clear", "mkdir", "vim", "help"]
+const cmd_head = ["help", "refresh", "cat", "ls", "cd", "clear", "mkdir", "vim", "help"]
 
 //定义当前路径分割后的数组
 var directory = []
@@ -105,9 +105,12 @@ var languageData = {
 
 var include = []
 
-//**************************************
-//    主程序
-//**************************************
+/**
+ * **********************************
+ * 函数名: main
+ * 功能: 主程序，在程序开始时初始化
+ * **********************************
+ */
 
 function main() {
     //操控Cookie，使用Js-cookie(已在index.html中引入)

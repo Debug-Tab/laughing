@@ -1,3 +1,12 @@
+/**
+ * **********************************
+ * 函数名: ls
+ * 功能: 列举目录与文件
+ * **********************************
+ * @param {Array} argv - 参数(路径)
+ * @returns {String} - HTML文本
+ */
+
 function ls(argv) {
 	let d;
     if (argv.length != 0) {
