@@ -18,34 +18,37 @@
 //**************************************
 
 
-//定义命令头，只有包含在里面的命令才会被执行
+// 定义命令头，只有包含在里面的命令才会被执行
 const cmd_head = ["help", "refresh", "cat", "ls", "cd", "clear", "mkdir", "vim", "help"]
 
-//定义当前路径分割后的数组
+// 定义当前路径分割后的数组
 var directory = []
 
-//目录json，包含所有文件(夹)的信息
+// 目录json，包含所有文件(夹)的信息
 var dir;
 
-//定义主要元素
+// 定义主要元素
 const terminal = $("#terminal")[0];
 const input = $("#terminal-input")[0];
 const html = $('body,html');
 
-//定义当前URL，用于提示语
+// 定义当前URL，用于提示语
 var host = window.location.hostname;
 if (host == "") host = "localhost";
 
-//当前语言
+// 当前语言
 var language = "zh-cn";
 
-//语言名称
+// 语言名称
 var languageName = {
     'zh-cn': ['中文', 'red'],
     'en-us': ['English', 'deepskyblue']
 }
 
-//多语言支持
+// 已包含的命令
+var include = []
+
+// 多语言支持
 var languageData = {
     'error': {
         'zh-cn': '错误: ',
@@ -103,7 +106,8 @@ var languageData = {
     },
 }
 
-var include = []
+// 启动！
+main()
 
 /**
  * **********************************
@@ -111,9 +115,11 @@ var include = []
  * 功能: 主程序，在程序开始时初始化
  * **********************************
  */
-
 function main() {
-    //操控Cookie，使用Js-cookie(已在index.html中引入)
+    // 操控Cookie，使用Js-cookie(已在index.html中引入)
+    if (document.location.protocol == "file:") {
+        Output('<br><span style="color: red">WARNING: USING THE FILE PROTOCOL!</span><br>');
+    }
     if (Cookies.get('file') == undefined) {
         getJson();
     } else {
@@ -143,6 +149,7 @@ function main() {
     input.addEventListener('blur', refocus);
     input.addEventListener('keydown', keydown);
 
+    Render(""); // 第一个提示符
     /*
     jQuery(function($, undefined) {
         $('#terminal-input').terminal(function(command) {
@@ -162,8 +169,6 @@ function main() {
     });
     */
 }
-
-main()
 
 /**
  * **********************************
@@ -200,35 +205,32 @@ function getJson() {
 
 /**
  * **********************************
- * 函数名: run
- * 功能: 获取输入并执行命令
+ * 函数名: analysis
+ * 功能: 分析输入并执行命令
  * **********************************
  * @returns {string} - 函数(命令)运行后返回的HTML字符串
  */
-function run() {
-    //获取输入的数值
+function analysis() {
+    // 获取输入的内容
     let script = input.value;
     if (script == "") return "<br>";
 
-    //在输入框前加入输入的内容
+    // 在输入框前加入输入的内容
     terminal.insertBefore(parseHTML(`<span>${script}</span>`), input);
 
-    //清空输入框
+    // 清空输入框
     input.value = "";
 
-    //按空格分割
-    script = script.split(" ");
+    // 按空格分割，并去除空字符串
+    script = script.split(" ").filter((x) => x !== '');
 
-    //去除空字符串
-    script = script.filter((x) => x !== '');
-
-    //输出日志
+    // 输出日志
     console.log(languageData['runCmd'][language] + script);
 
-    //忽略sudo
+    // (暂时)忽略sudo
     if (script[0] == "sudo") script = script.slice(1);
 
-    //如果命令不存在
+    // 如果命令不存在
     if (!cmd_head.includes(script[0]) || !script) {
         return `
             <span style="color: red">
@@ -236,20 +238,20 @@ function run() {
             </span><br>`;
     }
 
-    //try {
-        let r; //返回内容
+    // try {
+        let result; // 运行结果
         if(!(include.includes(script[0]))){
             console.log(`Load ${script[0] + '.js'}`);
             eval(getData(dir,
                 ['bin', script[0] + '.js'],
                 false,
                 true)
-            );
+            ); // 导入命令文件
         }
         Output("<br>");
-        eval(`r = ${script[0]}(${JSON.stringify(script.slice(1))})`);
+        eval(`result = ${script[0]}(${JSON.stringify(script.slice(1))})`); // 不安全！！！
 
-        return r;
+        return result; // 返回内容
         //return new Function(`return ${script[0]}(${JSON.stringify(script.slice(1))})`)();
         //return eval(`${script[0]}(script.slice(1))`);
     //} catch (err) {
@@ -329,7 +331,7 @@ function Render(tag) {
 function keydown(e) {
     e = e || window.event;
     if (e.keyCode == 13) {
-        Render(run());
+        Render(analysis());
         Cookies.set('file', JSON.stringify(dir));
     }
 }
@@ -350,7 +352,7 @@ function getData(d, path, noPath = false, file = false) {
     if (path.length == 0) return d;
     let name = Object.keys(d);
 
-    if (name.includes(path[0])) {   //如果存在目标文件
+    if (name.includes(path[0])) {   // 如果存在目标文件
         console.log(name);
         if ((typeof d[path[0]] == typeof {}) || file) {
             return path.length == 1 ? d[path[0]] : getData(d[path[0]], path.slice(1), noPath, file);
@@ -360,7 +362,7 @@ function getData(d, path, noPath = false, file = false) {
     }
     if (noPath) {
         if (path.length == 1){
-            d[path[0]] = file ? "" : {}; //如果是文件则data为字符串
+            d[path[0]] = file ? "" : {}; // 如果是文件则data为字符串
             return d[path[0]];
         }
         else {
@@ -398,9 +400,3 @@ function getRealPath(path) {
     return path;
 }
 
-
-function update(argv) {
-    getJson();
-    directory = [];
-    return `<span>${languageData['updateData'][language]}</span><br>`;
-}

@@ -1,5 +1,4 @@
 from pathlib import Path
-
 import argparse
 import json
 import sys
@@ -14,6 +13,8 @@ def getPath(path):
             with open(i, 'r', encoding='UTF-8') as f:
                 json[i.name] = f.read()
     return json
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(formatter_class = argparse.RawDescriptionHelpFormatter,
                                  description = '把文件夹转换为Json.\nConvert a real folder to json.',
@@ -36,8 +37,9 @@ if __name__ == "__main__":
     json = json.dumps(getPath(path), indent=4)
 
 
-    if args.savePath != None:
+    if args.savePath == None:
+        print(json)
+    else:
         with open(args.savePath, 'w') as f:
             f.write(json)
-    else:
-        print(json)
+        

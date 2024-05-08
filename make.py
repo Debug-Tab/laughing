@@ -2,8 +2,7 @@ from pathlib import Path
 from makeData import getPath
 import json
 
-_bin = getPath(Path(".\command"))
-_bin["name"] = "bin"
+_bin = getPath(Path(".\bin"))
 
 with open("data.json", encoding="utf-8") as f:
     data = json.load(f)
