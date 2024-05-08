@@ -1,17 +1,9 @@
 /*********************************************/
 /*    File name: main.js                     */
-/*    Function: Command parsing, processing  */
-/*    Last update: 2023.1.15                 */
-/*    dependencies: jQuery                   */
+/*    Function: MAIN                         */
+/*    Last update: 2024.5.8                  */
+/*    dependencies: jQuery, Js-cookie        */
 /*********************************************/
-
-//**************************************
-//    文件名: main.js
-//    功能: 命令解析,处理
-//    最后更新: 2023.1.15
-//    依赖: jQuery
-//**************************************
-
 
 //**************************************
 //    定义变量
@@ -19,7 +11,7 @@
 
 
 // 定义命令头，只有包含在里面的命令才会被执行
-const cmd_head = ["help", "refresh", "cat", "ls", "cd", "clear", "mkdir", "vim", "help"]
+const cmd_head = ["help", "refresh", "cat", "ls", "cd", "clear", "mkdir", "vim", "help", "cl", "touch", "copy"]
 
 // 定义当前路径分割后的数组
 var directory = []
@@ -181,12 +173,11 @@ function getJson() {
         url: "../data.json",
         type: "GET",
         dataType: "json",
-        success:
-            function (data) {
-                //console.log(data);
-                dir = data;
-                Cookies.set('file', JSON.stringify(dir));
-            }
+        success: function (data) {
+            //console.log(data);
+            dir = data;
+            Cookies.set('file', JSON.stringify(dir));
+        }
     });
 
 }
@@ -239,21 +230,20 @@ function analysis() {
     }
 
     // try {
-        let result; // 运行结果
-        if(!(include.includes(script[0]))){
-            console.log(`Load ${script[0] + '.js'}`);
-            eval(getData(dir,
-                ['bin', script[0] + '.js'],
-                false,
-                true)
-            ); // 导入命令文件
-        }
-        Output("<br>");
-        eval(`result = ${script[0]}(${JSON.stringify(script.slice(1))})`); // 不安全！！！
+    let result; // 运行结果
+    if (!(include.includes(script[0]))) {
+        console.log(`Load ${script[0] + '.js'}`);
+        eval(getData(dir,
+            ['bin', script[0] + '.js'],
+            false,
+            true)); // 导入命令文件
+    }
+    Output("<br>");
+    eval(`result = ${script[0]}(${JSON.stringify(script.slice(1))})`); // 不安全！！！
 
-        return result; // 返回内容
-        //return new Function(`return ${script[0]}(${JSON.stringify(script.slice(1))})`)();
-        //return eval(`${script[0]}(script.slice(1))`);
+    return result; // 返回内容
+    //return new Function(`return ${script[0]}(${JSON.stringify(script.slice(1))})`)();
+    //return eval(`${script[0]}(script.slice(1))`);
     //} catch (err) {
     //    return `<span style="color: red">${err}</span><br>`
     //}
@@ -298,7 +288,7 @@ function refocus() {
  * @param {String} str - 需输出的HTML字符串
  */
 function Output(str) {
-    let div = parseHTML(str);//解析字符串为HTML
+    let div = parseHTML(str); // 解析字符串为HTML
     terminal.insertBefore(div, input);
 }
 
@@ -318,7 +308,9 @@ function Render(tag) {
         </span></span>`;
 
     Output(temp);
-    html.animate({scrollTop: $(document).height()}, 0);
+    html.animate({
+        scrollTop: $(document).height()
+    }, 0);
 }
 
 
@@ -350,9 +342,9 @@ function keydown(e) {
 function getData(d, path, noPath = false, file = false) {
     //console.log([d,path]);
     if (path.length == 0) return d;
-    let name = Object.keys(d);
 
-    if (name.includes(path[0])) {   // 如果存在目标文件
+    let name = Object.keys(d);
+    if (name.includes(path[0])) { // 如果存在目标文件
         console.log(name);
         if ((typeof d[path[0]] == typeof {}) || file) {
             return path.length == 1 ? d[path[0]] : getData(d[path[0]], path.slice(1), noPath, file);
@@ -360,12 +352,12 @@ function getData(d, path, noPath = false, file = false) {
         console.log(file)
         return -2;
     }
+
     if (noPath) {
-        if (path.length == 1){
+        if (path.length == 1) {
             d[path[0]] = file ? "" : {}; // 如果是文件则data为字符串
             return d[path[0]];
-        }
-        else {
+        } else {
             return getData(d[path[0]], path.slice(1), noPath, file);
         }
     }
@@ -377,14 +369,14 @@ function getData(d, path, noPath = false, file = false) {
 /**
  * **********************************
  * 函数名: getRealPath
- * 功能:将相对路径及字符串转为绝对路径
+ * 功能: 将相对路径及字符串转为绝对路径
  * **********************************
  * @param path - 需转换的字符串或数组
  * @returns {Array} - 转换后的数组
  */
 function getRealPath(path) {
     if (typeof path == typeof "") {
-        //相对路径
+        // 相对路径
         if (path[0] != "/") {
             path = directory.concat(path.split("/"));
         } else {
@@ -400,3 +392,19 @@ function getRealPath(path) {
     return path;
 }
 
+/**
+ * **********************************
+ * 函数名: writeData
+ * 功能: 写入文件
+ * **********************************
+ * @param filePath - 文件路径
+ * @param {String} data - 写入内容
+ * @param {Boolean} appendMode - 写入内容
+ */
+function writeData(filePath, data, appendMode = false) {
+    if (appendMode) {
+        data = getData(dir, filePath, false, true) + data;
+    }
+    getData(dir, filePath.slice(0, -1))[filePath[filePath.length - 1]] = data;
+    return "<br>";
+}

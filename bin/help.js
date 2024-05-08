@@ -21,6 +21,9 @@ function help(argv) {
     clear 清屏
     mkdir &lt;path&gt; 创建文件夹
     vim &lt;path&gt; 修改文件，请使用 :w 退出(不带q)
+    cl &lt;language name&gt; 修改语言
+    touch &lt;path&gt; 创建文件
+    copy &lt;pathA&gt; &lt;pathB&gt; 复制文件
 </span>`);
     return '<br>';
 }

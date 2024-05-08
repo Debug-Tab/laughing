@@ -12,20 +12,20 @@ function vim(argv) {
         return `<span style="color: red">${SyntaxError(languageData['parameterError'][language])}</span><br>`;
     }
 
-    //通过判断后缀来实现高亮
+    // 通过判断后缀来实现高亮
     let extensions = {
         'md': 'markdown',
         'py': 'python',
         'txt': 'null'
     };
 
-    let mode = argv[0].split(".").slice(-1)[0]; //获取后缀
-    mode = (mode in extensions) ? extensions[mode] : "null"; //获取模式
+    let mode = argv[0].split(".").slice(-1)[0]; // 获取后缀
+    mode = (mode in extensions) ? extensions[mode] : "null"; // 获取模式
 
     console.log(mode);
 
     let filePath = getRealPath(argv[0])
-    //设置保存函数
+    // 设置保存函数
     CodeMirror.commands.save = function (e) {
         terminal.setAttribute("style", "");
         getData(dir, filePath, true, true);
@@ -35,7 +35,7 @@ function vim(argv) {
         $(".CodeMirror").remove();
     };
 
-    //获取需读取的文件内容
+    // 获取需读取的文件内容
     let fileContent = getData(
         dir,
         filePath,
@@ -58,7 +58,7 @@ function vim(argv) {
     );
     editor.focus()
 
-    //隐藏终端界面
+    // 隐藏终端界面
     terminal.setAttribute("style", "display:none;");
 
     return "<br>"

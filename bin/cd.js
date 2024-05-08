@@ -12,14 +12,14 @@ function cd(argv) {
         return `<span style="color: red">${SyntaxError(languageData['parameterError'][language])}</span><br>`;
     }
 
-    //获取需切换目录的信息，主要用于判断是否存在
+    // 获取需切换目录的信息，主要用于判断是否存在
     let path = getRealPath(argv[0]);
     let pathData = getData(dir, path);
 
 
-    if (pathData == -1) {    //如果目标不存在
+    if (pathData == -1) {    // 如果目标不存在
         return `<span style="color: red">${languageData['error'][language] + languageData['notFound'][language]}</span><br>`;
-    } else if (pathData == -2) {   //如果目标为文件
+    } else if (pathData == -2) {   // 如果目标为文件
         return `<span style="color: red">${languageData['error'][language] + argv[0] + languageData['notFolder'][language]}</span><br>`
     } else {
         directory = path;

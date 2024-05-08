@@ -2,7 +2,7 @@ from pathlib import Path
 from makeData import getPath
 import json
 
-_bin = getPath(Path(".\bin"))
+_bin = getPath(Path("./bin"))
 
 with open("data.json", encoding="utf-8") as f:
     data = json.load(f)
@@ -14,6 +14,6 @@ with open("data.json", "w", encoding="utf-8") as f:
               indent=4,
               sort_keys=True,
               ensure_ascii=False
-              )
+    )
 
 print(data)
