@@ -8,6 +8,6 @@
  */
 
 function touch(argv) {
-    getData(dir, getRealPath(argv[0]), true, true);
-    return `<br>`;
+    sys.getData(sys.storedData, getRealPath(argv[0]), true, true);
+    return ``;
 }

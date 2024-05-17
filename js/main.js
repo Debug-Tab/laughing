@@ -1,5 +1,5 @@
 /*********************************************/
-/*    File name: main.js                     */
+/*    File names: main.js                     */
 /*    Function: MAIN                         */
 /*    Last update: 2024.5.8                  */
 /*    dependencies: jQuery, Js-cookie        */
@@ -9,36 +9,120 @@
 //    定义变量
 //**************************************
 
+class System{
+    constructor() {
+        this.sysVar = {
+            "storedData": {},   //存储数据
+            "host": window.location.hostname?window.location.hostname:"localhost",
+            "language": "zh-cn", // 语言
+        }
+    }
 
-// 定义命令头，只有包含在里面的命令才会被执行
-const cmd_head = ["help", "refresh", "cat", "ls", "cd", "clear", "mkdir", "vim", "help", "cl", "touch", "copy"]
+    getVar(key) {
+        return this.sysVar[key];
+    }
+    
+    setVar(key, data) {
+        this.sysVar[key] = data;
+        return 0;
+    }
 
-// 定义当前路径分割后的数组
-var directory = []
+    get storedData(){
+        return this.sysVar["storedData"];
+    }
 
-// 目录json，包含所有文件(夹)的信息
-var dir;
+    getData(currentDir, path, noPath = false, file = false) {
+        //console.log([currentDir,path]);
+        if (path.length == 0) return currentDir;
+    
+        console.log(currentDir);
+        if (path[0] in currentDir) { // 如果存在目标
+            if ((typeof currentDir[path[0]] == 'object') || file) {
+                return path.length == 1 ? currentDir[path[0]] : this.getData(currentDir[path[0]], path.slice(1), noPath, file);
+            }
+            console.log(file)
+            return -2;
+        }
+    
+        if (noPath) {
+            if (path.length == 1) {
+                currentDir[path[0]] = file ? "" : {}; // 如果是文件则data为字符串
+                return currentDir[path[0]];
+            } else {
+                return this.getData(currentDir[path[0]], path.slice(1), noPath, file);
+            }
+        }
+        return -1;
+    }
 
-// 定义主要元素
-const terminal = $("#terminal")[0];
-const input = $("#terminal-input")[0];
-const html = $('body,html');
+    writeData(filePath, data, appendMode = false) {
+        if (appendMode) {
+            data = this.getData(this.storedData, filePath, false, true) + data;
+        }
+        this.getData(this.storedData, filePath.slice(0, -1))[filePath[filePath.length - 1]] = data;
+        return "<br>";
+    }
+    
+}
+
+class Terminal{
+    constructor(sys) {
+        this.termSet = {
+            "cmdHead": ["help", "refresh", "cat", "ls", "cd", "clear", "mkdir", "vim", "help", "cl", "touch", "copy"], // 命令头
+            "workPath": [],  //工作路径
+            "workingDir": {}, //工作目录
+            "include": [],   // 已导入的命令
+        }
+        this.sys = sys;
+    }
+
+    getVar(key) {
+        return this.termSet[key];
+    }
+    
+    setVar(key, data) {
+        this.termSet[key] = data;
+        return 0;
+    }
+
+    inputBox = $("#terminal-input")[0];
+    
+    get inputValue(){
+        return this.inputBox.value;
+    }
+
+    clearInput() {
+        this.inputBox.value = "";
+        return 0;
+    }
+
+    output(str) {
+        $("#terminal")[0].insertBefore(parseHTML(str), this.inputBox);
+    }
+
+    refocus() {
+        let that = this;
+        setTimeout(function () {
+            this.inputBox.focus();
+        }, 100);
+    
+    }
+
+    
+}
+
+const sys = new System();
+const term = new Terminal(sys);
 
 // 定义当前URL，用于提示语
 var host = window.location.hostname;
 if (host == "") host = "localhost";
 
-// 当前语言
-var language = "zh-cn";
-
 // 语言名称
-var languageName = {
-    'zh-cn': ['中文', 'red'],
-    'en-us': ['English', 'deepskyblue']
-}
+var languageName = ['zh-cn', 'en-us'];
 
 // 已包含的命令
-var include = []
+var include = [];
 
 // 多语言支持
 var languageData = {
@@ -110,36 +194,22 @@ main()
 function main() {
     // 操控Cookie，使用Js-cookie(已在index.html中引入)
     if (document.location.protocol == "file:") {
-        Output('<br><span style="color: red">WARNING: USING THE FILE PROTOCOL!</span><br>');
+        term.output('<br><span style="color: red">WARNING: USING THE FILE PROTOCOL!</span><br>');
     }
     if (Cookies.get('file') == undefined) {
         getJson();
     } else {
         try {
-            console.log(languageData['tryCookie'][language])
-            dir = JSON.parse(decodeURI(Cookies.get('file')));
+            console.log(languageData['tryCookie'][sys.getVar("language")]);
+            sys.setVar("storedData", JSON.parse(decodeURI(Cookies.get('file'))));
         } catch (err) {
-            console.log(languageData['tryCookieError'][language] + document.cookie);
+            console.log(languageData['tryCookieError'][sys.getVar("language")] + document.cookie);
             getJson();
         }
     }
-    for (let i of document.getElementsByClassName("host")) {
-        i.innerHTML = host;
-    }
 
-    let welcome = $("#welcome")[0]
-    for (let k in languageName) {
-        let temp = `<a 
-                        href="javascript:void(0);" 
-                        onclick="language='${k}'" 
-                        style="color: ${languageName[k][1]}"
-                    >${languageName[k][0]}</a>
-                    <p>&nbsp;</p>`
-        welcome.appendChild(parseHTML(temp))
-    }
-
-    input.addEventListener('blur', refocus);
-    input.addEventListener('keydown', keydown);
+    //term.inputBox.addEventListener('blur', term.refocus);
+    term.inputBox.addEventListener('keydown', keydown);
 
     Render(""); // 第一个提示符
     /*
@@ -152,14 +222,56 @@ function main() {
                 }
             }
         }, {
-            greetings: 'Javascript Interpreter',
-            name: 'js_demo',
+            greetings: 'Javacommand Interpreter',
+            names: 'js_demo',
             height: 200,
             width: 450,
             prompt: 'js> '
         });
     });
     */
+}
+
+function analysis() {
+    let command = term.inputValue;
+    if (command == "") return "<br>";
+
+    term.output(`<span>${command}</span><br>`);
+    term.clearInput();
+
+    // 按空格分割，并去除空字符串
+    command = command.split(" ").filter((x) => x !== '');
+
+    // 输出日志
+    console.log(languageData['runCmd'][sys.getVar("language")] + command);
+
+    // (暂时)忽略sudo
+    if (command[0] == "sudo") command = command.slice(1);
+
+    // 如果命令不存在
+    if (!term.getVar("cmdHead").includes(command[0]) || !command) {
+        return `
+            <span style="color: red">
+                ${languageData['error'][sys.getVar("language")] + languageData['unableFind'][sys.getVar("language")] + command[0]}
+            </span><br>`;
+    }
+
+    // try {
+    let funcText = "";
+    if (!(term.getVar("include").includes(command[0]))) {
+        console.log(`Load ${command[0] + '.js'}`);
+        funcText += sys.getData(sys.storedData, ['bin', command[0] + '.js'], false, true);
+    }
+
+    //let result; // 运行结果
+    //eval(`result = ${command[0]}(${JSON.stringify(command.slice(1))})`); // 不安全！！！
+
+    //return result; // 返回内容
+    funcText += `return ${command[0]}(${JSON.stringify(command.slice(1))})`;
+    return Function(funcText)();
+    //} catch (err) {
+    //    return `<span style="color: red">${err}</span><br>`
+    //}
 }
 
 /**
@@ -175,8 +287,8 @@ function getJson() {
         dataType: "json",
         success: function (data) {
             //console.log(data);
-            dir = data;
-            Cookies.set('file', JSON.stringify(dir));
+            sys.setVar("storedData", data);
+            Cookies.set('file', JSON.stringify(sys.storedData));
         }
     });
 
@@ -187,67 +299,11 @@ function getJson() {
  * 函数名: getData
  * 功能: 获取相应路径的对象
  * **********************************
- * @param {Object} d - 解析的来源，大部分时候是全局变量dir，仅为方便递归
+ * @param {Object} currentDir - 解析的来源，大部分时候是全局变量dir，仅为方便递归
  * @param {Array} path - 需要获取的路径分割后的数组，仅可为绝对路径(可使用getRealPath来将相对路径转为绝对路径)
  * @param {boolean} noPath - 如果为真，表示可能不存在此路径，需创建
  * @param {boolean} file - 是否为文件
  */
-
-
-/**
- * **********************************
- * 函数名: analysis
- * 功能: 分析输入并执行命令
- * **********************************
- * @returns {string} - 函数(命令)运行后返回的HTML字符串
- */
-function analysis() {
-    // 获取输入的内容
-    let script = input.value;
-    if (script == "") return "<br>";
-
-    // 在输入框前加入输入的内容
-    terminal.insertBefore(parseHTML(`<span>${script}</span>`), input);
-
-    // 清空输入框
-    input.value = "";
-
-    // 按空格分割，并去除空字符串
-    script = script.split(" ").filter((x) => x !== '');
-
-    // 输出日志
-    console.log(languageData['runCmd'][language] + script);
-
-    // (暂时)忽略sudo
-    if (script[0] == "sudo") script = script.slice(1);
-
-    // 如果命令不存在
-    if (!cmd_head.includes(script[0]) || !script) {
-        return `
-            <span style="color: red">
-                ${languageData['error'][language] + languageData['unableFind'][language] + script[0]}
-            </span><br>`;
-    }
-
-    // try {
-    let result; // 运行结果
-    if (!(include.includes(script[0]))) {
-        console.log(`Load ${script[0] + '.js'}`);
-        eval(getData(dir,
-            ['bin', script[0] + '.js'],
-            false,
-            true)); // 导入命令文件
-    }
-    Output("<br>");
-    eval(`result = ${script[0]}(${JSON.stringify(script.slice(1))})`); // 不安全！！！
-
-    return result; // 返回内容
-    //return new Function(`return ${script[0]}(${JSON.stringify(script.slice(1))})`)();
-    //return eval(`${script[0]}(script.slice(1))`);
-    //} catch (err) {
-    //    return `<span style="color: red">${err}</span><br>`
-    //}
-}
 
 
 /**
@@ -264,22 +320,6 @@ function parseHTML(html) {
     return t.content;
 }
 
-
-/**
- * **********************************
- * 函数名: refocus
- * 功能: 在失去焦点时再次获取焦点(用于输入框，暂时停用)
- * **********************************
- */
-function refocus() {
-    let that = this;
-    setTimeout(function () {
-        //document.getElementById("terminal-input").focus();
-    }, 100);
-
-}
-
-
 /**
  * **********************************
  * 函数名: Output
@@ -288,8 +328,8 @@ function refocus() {
  * @param {String} str - 需输出的HTML字符串
  */
 function Output(str) {
-    let div = parseHTML(str); // 解析字符串为HTML
-    terminal.insertBefore(div, input);
+    $("#terminal")[0].insertBefore(parseHTML(str), term.inputBox);
+    return 0;
 }
 
 /**
@@ -303,12 +343,12 @@ function Render(tag) {
     //合并输出内容
     let temp = `
         ${tag}
-        <span class="prefix">[<span id="usr">usr</span>@<span class="host">${host}</span> <span
-        id="directory">${"/" + directory.join("/")}</span>]<span id="pos">&gt;
+        <span class="prefix">[<span id="usr">usr</span>@<span class="host">${sys.getVar("host")}</span> <span
+        id="directory">${"/" + term.getVar("workPath").join("/")}</span>]<span id="pos">&gt;
         </span></span>`;
 
-    Output(temp);
-    html.animate({
+    term.output(temp);
+    $('body,html').animate({
         scrollTop: $(document).height()
     }, 0);
 }
@@ -324,47 +364,9 @@ function keydown(e) {
     e = e || window.event;
     if (e.keyCode == 13) {
         Render(analysis());
-        Cookies.set('file', JSON.stringify(dir));
+        Cookies.set('file', JSON.stringify(sys.storedData));
     }
 }
-
-
-/**
- * **********************************
- * 函数名: getData
- * 功能: 获取相应路径的对象
- * **********************************
- * @param {Object} d - 解析的来源，大部分时候是全局变量dir，仅为方便递归
- * @param {Array} path - 需要获取的路径分割后的数组，仅可为绝对路径(可使用getRealPath来将相对路径转为绝对路径)
- * @param {boolean} noPath - 如果为真，表示可能不存在此路径，需创建
- * @param {boolean} file - 是否为文件
- */
-function getData(d, path, noPath = false, file = false) {
-    //console.log([d,path]);
-    if (path.length == 0) return d;
-
-    let name = Object.keys(d);
-    if (name.includes(path[0])) { // 如果存在目标文件
-        console.log(name);
-        if ((typeof d[path[0]] == typeof {}) || file) {
-            return path.length == 1 ? d[path[0]] : getData(d[path[0]], path.slice(1), noPath, file);
-        }
-        console.log(file)
-        return -2;
-    }
-
-    if (noPath) {
-        if (path.length == 1) {
-            d[path[0]] = file ? "" : {}; // 如果是文件则data为字符串
-            return d[path[0]];
-        } else {
-            return getData(d[path[0]], path.slice(1), noPath, file);
-        }
-    }
-    return -1;
-
-}
-
 
 /**
  * **********************************
@@ -375,36 +377,24 @@ function getData(d, path, noPath = false, file = false) {
  * @returns {Array} - 转换后的数组
  */
 function getRealPath(path) {
-    if (typeof path == typeof "") {
-        // 相对路径
-        if (path[0] != "/") {
-            path = directory.concat(path.split("/"));
-        } else {
-            path = path.split("/")
-        }
-        path = path.filter((x) => x !== '');
+    if (typeof path == 'string') {
+        path = path.split("/");
+        if(path[0]) 
+            path = term.getVar("workPath").concat(path); // 相对路径
     }
 
-
+    path = path.filter((x) => x !== '');
     while (path.includes("..")) {
         path.splice(path.indexOf("..") - 1, 2);
     }
     return path;
 }
 
-/**
- * **********************************
- * 函数名: writeData
- * 功能: 写入文件
- * **********************************
- * @param filePath - 文件路径
- * @param {String} data - 写入内容
- * @param {Boolean} appendMode - 写入内容
- */
-function writeData(filePath, data, appendMode = false) {
-    if (appendMode) {
-        data = getData(dir, filePath, false, true) + data;
+function exist(path, currentDir = sys.storedData) {
+    if (path.length == 1) {
+        return path[0] in currentDir;
     }
-    getData(dir, filePath.slice(0, -1))[filePath[filePath.length - 1]] = data;
-    return "<br>";
+    return (path[0] in currentDir)
+        ? exist(path.slice(1), currentDir[path[0]])
+        : false;
 }

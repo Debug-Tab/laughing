@@ -8,7 +8,7 @@
  */
 
 function copy(argv) {
-    let content = getData(dir, getRealPath(argv[0]), true, true);
-    writeData(getRealPath(argv[1]), content);
+    let content = sys.getData(sys.storedData, getRealPath(argv[0]), true, true);
+    sys.writeData(getRealPath(argv[1]), content);
     return `<br>`;
 }

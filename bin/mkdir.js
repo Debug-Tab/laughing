@@ -9,12 +9,12 @@
 
 function mkdir(argv) {
     if (argv.length == 0) {
-        return `<span style="color: red">${SyntaxError(languageData['parameterError'][language])}</span><br>`;
+        return `<span style="color: red">${SyntaxError(languageData['parameterError'][sys.getVar("language")])}</span><br>`;
     }
     else if (argv.length == 1) {
         argv = argv[0];
     }
 
-    getData(dir, getRealPath(argv), true, false);
+    sys.getData(sys.storedData, getRealPath(argv), true, false);
     return "";
 }

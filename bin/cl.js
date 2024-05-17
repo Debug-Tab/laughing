@@ -9,7 +9,7 @@
 
 function cl(argv) {
     if (argv[0] in languageName) {
-        language = argv[0];
+        sys.setVar("language", argv[0]);
         return ``;
     }
     else return `<span style="color: red">Can not find the language named ${argv[0]}</span><br>`;

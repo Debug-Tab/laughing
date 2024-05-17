@@ -10,5 +10,5 @@
 function refresh(argv) {
     getJson();
     directory = [];
-    return `<span>${languageData['updateData'][language]}</span><br>`;
+    return `<span>${languageData['updateData'][sys.getVar("language")]}</span><br>`;
 }
