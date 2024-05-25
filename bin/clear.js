@@ -7,12 +7,10 @@
  * @returns {String} - HTML文本
  */
 
-function clear(argv) {
-    $("#terminal > *").each(
-        (_i, e) => {
-            if (e.tagName != "INPUT" && e.tagName != "SCRIPT")
-                e.remove();
-        }
-    );
-    return "";
-}
+$("#terminal > *").each(
+    (_i, e) => {
+        if (e.tagName != "INPUT" && e.tagName != "SCRIPT")
+            e.remove();
+    }
+);
+return "";

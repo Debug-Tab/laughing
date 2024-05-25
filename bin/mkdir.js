@@ -7,14 +7,12 @@
  * @returns {String} - HTML文本
  */
 
-function mkdir(argv) {
-    if (argv.length == 0) {
-        return `<span style="color: red">${SyntaxError(languageData['parameterError'][sys.getVar("language")])}</span><br>`;
-    }
-    else if (argv.length == 1) {
-        argv = argv[0];
-    }
-
-    sys.getData(sys.storedData, getRealPath(argv), true, false);
-    return "";
+if (argv.length == 0) {
+    return `<span style="color: red">${SyntaxError(languageData['parameterError'][sys.getVar("language")])}</span><br>`;
 }
+else if (argv.length == 1) {
+    argv = argv[0];
+}
+
+sys.getData(sys.storedData, term.getRealPath(argv), true, false);
+return "";

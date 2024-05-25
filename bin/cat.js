@@ -7,12 +7,11 @@
  * @returns {String} - HTML文本
  */
 
-function cat(argv) {
-    if (argv.length == 0) {
-        return `<span style="color: red">${SyntaxError(languageData['parameterError'][sys.getVar("language")])}</span><br>`;
-    }
-
-    let p = getRealPath(argv[0]);
-    let text = sys.getData(sys.storedData, p, false, true);
-    return `<span style="white-space: pre;">${text}</span>`;
+if (argv.length == 0) {
+    return `<span style="color: red">${SyntaxError(languageData['parameterError'][sys.getVar("language")])}</span><br>`;
 }
+
+let p = term.getRealPath(argv[0]);
+let text = sys.getData(sys.storedData, p, false, true);
+
+return `<span style="white-space: pre;">${text}</span>`;

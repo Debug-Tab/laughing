@@ -7,7 +7,5 @@
  * @returns {String} - HTML文本
  */
 
-function touch(argv) {
-    sys.getData(sys.storedData, getRealPath(argv[0]), true, true);
-    return ``;
-}
+sys.getData(sys.storedData, term.getRealPath(argv[0]), true, true);
+return ``;

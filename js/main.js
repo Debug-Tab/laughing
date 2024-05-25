@@ -1,7 +1,7 @@
 /*********************************************/
-/*    File names: main.js                     */
+/*    File names: main.js                    */
 /*    Function: MAIN                         */
-/*    Last update: 2024.5.8                  */
+/*    Last update: 2024.5.25                 */
 /*    dependencies: jQuery, Js-cookie        */
 /*********************************************/
 
@@ -16,6 +16,10 @@ class System{
             "host": window.location.hostname?window.location.hostname:"localhost",
             "language": "zh-cn", // 语言
         }
+    }
+
+    runTerminal(term){
+        this.term = term;
     }
 
     getVar(key) {
@@ -62,18 +66,43 @@ class System{
         this.getData(this.storedData, filePath.slice(0, -1))[filePath[filePath.length - 1]] = data;
         return "<br>";
     }
+
+    exist(path, currentDir = this.storedData) {
+        if (path.length == 1) {
+            return path[0] in currentDir;
+        }
+        return (path[0] in currentDir)
+            ? this.exist(path.slice(1), currentDir[path[0]])
+            : false;
+    }
     
 }
 
 class Terminal{
     constructor(sys) {
         this.termSet = {
-            "cmdHead": ["help", "refresh", "cat", "ls", "cd", "clear", "mkdir", "vim", "help", "cl", "touch", "copy"], // 命令头
-            "workPath": [],  //工作路径
-            "workingDir": {}, //工作目录
-            "include": [],   // 已导入的命令
         }
+        this._workPath = [];
+        this._workingDir = {};
+        this._cache = {};
         this.sys = sys;
+    }
+
+    get workPath() {
+        return this._workPath;
+    }
+
+    setWorkPath(arg) {
+        this._workingDir = sys.getData(sys.storedData, arg, false, false);
+        this._workPath = arg;
+    }
+
+    cache(name) {
+        return this._cache[name];
+    }
+
+    addCache(name, func) {
+        this._cache[name] = func;
     }
 
     getVar(key) {
@@ -86,7 +115,6 @@ class Terminal{
     }
 
     inputBox = $("#terminal-input")[0];
-    
     get inputValue(){
         return this.inputBox.value;
     }
@@ -96,8 +124,22 @@ class Terminal{
         return 0;
     }
 
+    htmlEncode(text) {
+        let arrEntities = {'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'};
+        return text.replace(/[<>&"]/g, function(c){return arrEntities[c];});
+    }
+
+    htmlDecode(str) {
+        let arrEntities = {'lt':'<','gt':'>','nbsp':' ','amp':'&','quot':'"'};
+        return str.replace(/&(lt|gt|nbsp|amp|quot);/ig, function(all,t){return arrEntities[t];});
+    }
+
     output(str) {
         $("#terminal")[0].insertBefore(parseHTML(str), this.inputBox);
+    }
+
+    print(text) {
+        this.output(`<span style="white-space: pre-wrap; word-wrap: break-word">${this.htmlEncode(text)}</span>`);
     }
 
     refocus() {
@@ -108,15 +150,37 @@ class Terminal{
     
     }
 
+    getRealPath(path) {
+        if (typeof path == 'string') {
+            path = path.split("/");
+            if(path[0]) 
+                path = this.workPath.concat(path); // 相对路径
+        }
+
+        path = path.filter((x) => x !== '');
+        while (path.includes("..")) {
+            path.splice(path.indexOf("..") - 1, 2);
+        }
+        return path;
+    }
+
+    runCmd(name, argv){
+        if (!this.sys.exist(["bin", name + '.js'])) 
+            return `<span style="color: red">Cannot find the "${name}" !</span><br>`;
+        if (!(name in this._cache)) {
+            let funcText = this.sys.getData(this.sys.storedData, ['bin', name + '.js'], false, true);
+            //funcText += `return ${name}(${JSON.stringify(argv)})`;
+            this.addCache(name, new Function("argv", funcText));
+        }
+
+        return this.cache(name)(argv);
+    }
     
 }
-
 const sys = new System();
 const term = new Terminal(sys);
 
-// 定义当前URL，用于提示语
-var host = window.location.hostname;
-if (host == "") host = "localhost";
+sys.runTerminal(term);
 
 // 语言名称
 var languageName = ['zh-cn', 'en-us'];
@@ -247,28 +311,9 @@ function analysis() {
 
     // (暂时)忽略sudo
     if (command[0] == "sudo") command = command.slice(1);
-
-    // 如果命令不存在
-    if (!term.getVar("cmdHead").includes(command[0]) || !command) {
-        return `
-            <span style="color: red">
-                ${languageData['error'][sys.getVar("language")] + languageData['unableFind'][sys.getVar("language")] + command[0]}
-            </span><br>`;
-    }
-
+    
     // try {
-    let funcText = "";
-    if (!(term.getVar("include").includes(command[0]))) {
-        console.log(`Load ${command[0] + '.js'}`);
-        funcText += sys.getData(sys.storedData, ['bin', command[0] + '.js'], false, true);
-    }
-
-    //let result; // 运行结果
-    //eval(`result = ${command[0]}(${JSON.stringify(command.slice(1))})`); // 不安全！！！
-
-    //return result; // 返回内容
-    funcText += `return ${command[0]}(${JSON.stringify(command.slice(1))})`;
-    return Function(funcText)();
+    return term.runCmd(command[0], command.slice(1));
     //} catch (err) {
     //    return `<span style="color: red">${err}</span><br>`
     //}
@@ -344,7 +389,7 @@ function Render(tag) {
     let temp = `
         ${tag}
         <span class="prefix">[<span id="usr">usr</span>@<span class="host">${sys.getVar("host")}</span> <span
-        id="directory">${"/" + term.getVar("workPath").join("/")}</span>]<span id="pos">&gt;
+        id="directory">${"/" + term.workPath.join("/")}</span>]<span id="pos">&gt;
         </span></span>`;
 
     term.output(temp);
@@ -366,35 +411,4 @@ function keydown(e) {
         Render(analysis());
         Cookies.set('file', JSON.stringify(sys.storedData));
     }
-}
-
-/**
- * **********************************
- * 函数名: getRealPath
- * 功能: 将相对路径及字符串转为绝对路径
- * **********************************
- * @param path - 需转换的字符串或数组
- * @returns {Array} - 转换后的数组
- */
-function getRealPath(path) {
-    if (typeof path == 'string') {
-        path = path.split("/");
-        if(path[0]) 
-            path = term.getVar("workPath").concat(path); // 相对路径
-    }
-
-    path = path.filter((x) => x !== '');
-    while (path.includes("..")) {
-        path.splice(path.indexOf("..") - 1, 2);
-    }
-    return path;
-}
-
-function exist(path, currentDir = sys.storedData) {
-    if (path.length == 1) {
-        return path[0] in currentDir;
-    }
-    return (path[0] in currentDir)
-        ? exist(path.slice(1), currentDir[path[0]])
-        : false;
 }

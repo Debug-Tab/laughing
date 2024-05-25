@@ -70,5 +70,16 @@
 
 4.3.2 (2024/5/8)
 	添加命令cl, touch, copy
+
 4.3.3 (2024/5/17)
 	大幅度重构，看了《重构》这本书更深刻地理解自己写的有多烂...
+	重构包括：
+		提炼出System和Terminal两个类
+		将analysis中运行命令的部分提取到方法Terminal.runCmd
+		修改命令执行逻辑：缓存Function对象
+		添加writeData, exist等系统API
+		其它忘记了...
+
+4.3.4 (2024/5/25)
+	修改执行逻辑，把所有命令文件的function给去掉了！以后能像写脚本一样写命令文件了
+	添加term.print和html编码、解码的函数

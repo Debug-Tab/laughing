@@ -7,8 +7,6 @@
  * @returns {String} - HTML文本
  */
 
-function refresh(argv) {
-    getJson();
-    directory = [];
-    return `<span>${languageData['updateData'][sys.getVar("language")]}</span><br>`;
-}
+getJson();
+directory = [];
+return `<span>${languageData['updateData'][sys.getVar("language")]}</span><br>`;
