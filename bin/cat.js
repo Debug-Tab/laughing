@@ -8,10 +8,10 @@
  */
 
 if (argv.length == 0) {
-    return `<span style="color: red">${SyntaxError(languageData['parameterError'][sys.getVar("language")])}</span><br>`;
+    return `<span style="color: red">${SyntaxError(languageData['parameterError'][System.getVar("language")])}</span><br>`;
 }
 
-let p = term.getRealPath(argv[0]);
-let text = sys.getData(sys.storedData, p, false, true);
+let p = Terminal.getRealPath(argv[0]);
+let text = System.getData(System.storedData, p, false, true);
 
 return `<span style="white-space: pre;">${text}</span>`;

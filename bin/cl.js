@@ -7,7 +7,7 @@
  * @returns {String} - HTML文本
  */
 if (argv[0] in languageName) {
-    sys.setVar("language", argv[0]);
+    System.setVar("language", argv[0]);
     return ``;
 }
 

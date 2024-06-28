@@ -7,7 +7,7 @@
  * @returns {String} - HTML文本
  */
 
-let d = sys.getData(sys.storedData, (argv.length == 0)?term.workPath: term.getRealPath(argv[0]));
+let d = System.getData(System.storedData, (argv.length == 0)?Terminal.workPath: Terminal.getRealPath(argv[0]));
 let dirList = [], fileList = [];
 
 for (let key in d) {

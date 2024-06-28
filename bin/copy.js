@@ -7,6 +7,6 @@
  * @returns {String} - HTML文本
  */
 
-let content = sys.getData(sys.storedData, term.getRealPath(argv[0]), true, true);
-sys.writeData(term.getRealPath(argv[1]), content);
+let content = System.getData(System.storedData, Terminal.getRealPath(argv[0]), true, true);
+System.writeData(Terminal.getRealPath(argv[1]), content);
 return `<br>`;

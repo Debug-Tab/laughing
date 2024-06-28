@@ -8,7 +8,7 @@
  */
 
 if (argv.length == 0) {
-    return `<span style="color: red">${SyntaxError(languageData['parameterError'][sys.getVar("language")])}</span><br>`;
+    return `<span style="color: red">${SyntaxError(languageData['parameterError'][System.getVar("language")])}</span><br>`;
 }
 
 // 通过判断后缀来实现高亮
@@ -23,19 +23,19 @@ mode = (mode in extensions) ? extensions[mode] : "null"; // 获取模式
 
 console.log(mode);
 
-let filePath = term.getRealPath(argv[0]);
+let filePath = Terminal.getRealPath(argv[0]);
 
 // 设置保存函数
 CodeMirror.commands.save = function (e) {
     terminal.setAttribute("style", "");
-    sys.writeData(filePath, editor.getValue(), false);
+    System.writeData(filePath, editor.getValue(), false);
     $(".CodeMirror").remove();
-    term.refocus();
+    Terminal.refocus();
 };
 
 // 获取需读取的文件内容
-let fileContent = sys.getData(
-    sys.storedData,
+let fileContent = System.getData(
+    System.storedData,
     filePath,
     true,
     true

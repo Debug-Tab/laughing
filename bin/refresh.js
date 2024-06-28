@@ -9,4 +9,4 @@
 
 getJson();
 directory = [];
-return `<span>${languageData['updateData'][sys.getVar("language")]}</span><br>`;
+return `<span>${languageData['updateData'][System.getVar("language")]}</span><br>`;

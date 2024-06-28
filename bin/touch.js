@@ -7,5 +7,5 @@
  * @returns {String} - HTML文本
  */
 
-sys.getData(sys.storedData, term.getRealPath(argv[0]), true, true);
+System.getData(System.storedData, Terminal.getRealPath(argv[0]), true, true);
 return ``;

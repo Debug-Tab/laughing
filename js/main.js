@@ -9,7 +9,7 @@
 //    定义变量
 //**************************************
 
-class System{
+const System = new class {
     constructor() {
         this.sysVar = {
             "storedData": {},   //存储数据
@@ -18,7 +18,7 @@ class System{
         }
     }
 
-    runTerminal(term){
+    setTerminal(term){
         this.term = term;
     }
 
@@ -78,14 +78,14 @@ class System{
     
 }
 
-class Terminal{
-    constructor(sys) {
+const Terminal = new class {
+    constructor() {
         this.termSet = {
         }
         this._workPath = [];
         this._workingDir = {};
         this._cache = {};
-        this.sys = sys;
+        // this.sys = sys;
     }
 
     get workPath() {
@@ -93,7 +93,7 @@ class Terminal{
     }
 
     setWorkPath(arg) {
-        this._workingDir = sys.getData(sys.storedData, arg, false, false);
+        this._workingDir = System.getData(System.storedData, arg, false, false);
         this._workPath = arg;
     }
 
@@ -165,10 +165,10 @@ class Terminal{
     }
 
     runCmd(name, argv){
-        if (!this.sys.exist(["bin", name + '.js'])) 
+        if (!System.exist(["bin", name + '.js'])) 
             return `<span style="color: red">Cannot find the "${name}" !</span><br>`;
         if (!(name in this._cache)) {
-            let funcText = this.sys.getData(this.sys.storedData, ['bin', name + '.js'], false, true);
+            let funcText = System.getData(System.storedData, ['bin', name + '.js'], false, true);
             //funcText += `return ${name}(${JSON.stringify(argv)})`;
             this.addCache(name, new Function("argv", funcText));
         }
@@ -177,18 +177,13 @@ class Terminal{
     }
     
 }
-const sys = new System();
-const term = new Terminal(sys);
 
-sys.runTerminal(term);
+System.setTerminal(Terminal);
 
 // 语言名称
 var languageName = ['zh-cn', 'en-us'];
 
-// 已包含的命令
-var include = [];
-
-// 多语言支持
+// 多语言支持(准备废弃)
 var languageData = {
     'error': {
         'zh-cn': '错误: ',
@@ -258,22 +253,22 @@ main()
 function main() {
     // 操控Cookie，使用Js-cookie(已在index.html中引入)
     if (document.location.protocol == "file:") {
-        term.output('<br><span style="color: red">WARNING: USING THE FILE PROTOCOL!</span><br>');
+        Terminal.output('<br><span style="color: red">WARNING: USING THE FILE PROTOCOL!</span><br>');
     }
     if (Cookies.get('file') == undefined) {
         getJson();
     } else {
         try {
-            console.log(languageData['tryCookie'][sys.getVar("language")]);
-            sys.setVar("storedData", JSON.parse(decodeURI(Cookies.get('file'))));
+            console.log(languageData['tryCookie'][System.getVar("language")]);
+            System.setVar("storedData", JSON.parse(decodeURI(Cookies.get('file'))));
         } catch (err) {
-            console.log(languageData['tryCookieError'][sys.getVar("language")] + document.cookie);
+            console.log(languageData['tryCookieError'][System.getVar("language")] + document.cookie);
             getJson();
         }
     }
 
-    //term.inputBox.addEventListener('blur', term.refocus);
-    term.inputBox.addEventListener('keydown', keydown);
+    //Terminal.inputBox.addEventListener('blur', Terminal.refocus);
+    Terminal.inputBox.addEventListener('keydown', keydown);
 
     Render(""); // 第一个提示符
     /*
@@ -297,23 +292,23 @@ function main() {
 }
 
 function analysis() {
-    let command = term.inputValue;
+    let command = Terminal.inputValue;
     if (command == "") return "<br>";
 
-    term.output(`<span>${command}</span><br>`);
-    term.clearInput();
+    Terminal.output(`<span>${command}</span><br>`);
+    Terminal.clearInput();
 
     // 按空格分割，并去除空字符串
     command = command.split(" ").filter((x) => x !== '');
 
     // 输出日志
-    console.log(languageData['runCmd'][sys.getVar("language")] + command);
+    console.log(languageData['runCmd'][System.getVar("language")] + command);
 
     // (暂时)忽略sudo
     if (command[0] == "sudo") command = command.slice(1);
     
     // try {
-    return term.runCmd(command[0], command.slice(1));
+    return Terminal.runCmd(command[0], command.slice(1));
     //} catch (err) {
     //    return `<span style="color: red">${err}</span><br>`
     //}
@@ -332,8 +327,8 @@ function getJson() {
         dataType: "json",
         success: function (data) {
             //console.log(data);
-            sys.setVar("storedData", data);
-            Cookies.set('file', JSON.stringify(sys.storedData));
+            System.setVar("storedData", data);
+            Cookies.set('file', JSON.stringify(System.storedData));
         }
     });
 
@@ -373,7 +368,7 @@ function parseHTML(html) {
  * @param {String} str - 需输出的HTML字符串
  */
 function Output(str) {
-    $("#terminal")[0].insertBefore(parseHTML(str), term.inputBox);
+    $("#terminal")[0].insertBefore(parseHTML(str), Terminal.inputBox);
     return 0;
 }
 
@@ -388,11 +383,10 @@ function Render(tag) {
     //合并输出内容
     let temp = `
         ${tag}
-        <span class="prefix">[<span id="usr">usr</span>@<span class="host">${sys.getVar("host")}</span> <span
-        id="directory">${"/" + term.workPath.join("/")}</span>]<span id="pos">&gt;
+        <span class="prefix">[<span id="usr">usr</span>@<span class="host">${System.getVar("host")}</span> <span
+        id="directory">${"/" + Terminal.workPath.join("/")}</span>]<span id="pos">&gt;
         </span></span>`;
-
-    term.output(temp);
+    Terminal.output(temp);
     $('body,html').animate({
         scrollTop: $(document).height()
     }, 0);
@@ -409,6 +403,6 @@ function keydown(e) {
     e = e || window.event;
     if (e.keyCode == 13) {
         Render(analysis());
-        Cookies.set('file', JSON.stringify(sys.storedData));
+        Cookies.set('file', JSON.stringify(System.storedData));
     }
 }

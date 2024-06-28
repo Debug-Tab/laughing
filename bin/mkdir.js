@@ -8,11 +8,11 @@
  */
 
 if (argv.length == 0) {
-    return `<span style="color: red">${SyntaxError(languageData['parameterError'][sys.getVar("language")])}</span><br>`;
+    return `<span style="color: red">${SyntaxError(languageData['parameterError'][System.getVar("language")])}</span><br>`;
 }
 else if (argv.length == 1) {
     argv = argv[0];
 }
 
-sys.getData(sys.storedData, term.getRealPath(argv), true, false);
+System.getData(System.storedData, Terminal.getRealPath(argv), true, false);
 return "";
