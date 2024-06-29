@@ -7,8 +7,8 @@
  * @returns {String} - HTML文本
  */
 
-if (argv.length == 0) {
-    return `<span style="color: red">${SyntaxError(languageData['parameterError'][System.getVar("language")])}</span><br>`;
+if (argv.length != 1) {
+    throw new ParameterError(`cat expects 1 arguments.`);
 }
 
 let p = Terminal.getRealPath(argv[0]);

@@ -7,6 +7,10 @@
  * @returns {String} - HTML文本
  */
 
+if (argv.length != 2) {
+    throw new ParameterError(`copy expects 2 arguments.`);
+}
+
 let content = System.getData(System.storedData, Terminal.getRealPath(argv[0]), true, true);
 System.writeData(Terminal.getRealPath(argv[1]), content);
 return `<br>`;

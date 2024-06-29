@@ -7,12 +7,9 @@
  * @returns {String} - HTML文本
  */
 
-if (argv.length == 0) {
-    return `<span style="color: red">${SyntaxError(languageData['parameterError'][System.getVar("language")])}</span><br>`;
-}
-else if (argv.length == 1) {
-    argv = argv[0];
+if (argv.length != 1) {
+    throw new ParameterError(`mkdir expects 1 arguments.`);
 }
 
-System.getData(System.storedData, Terminal.getRealPath(argv), true, false);
+System.getData(System.storedData, Terminal.getRealPath(argv[0]), true, false);
 return "";

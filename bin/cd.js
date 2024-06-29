@@ -7,7 +7,7 @@
  * @returns {String} - HTML文本
  */
 if (argv.length != 1) {
-    return `<span style="color: red">${SyntaxError(languageData['parameterError'][System.getVar("language")])}</span><br>`;
+    throw new ParameterError(`cd expects 1 arguments.`);
 }
 
 // 获取需切换目录的信息，主要用于判断是否存在
@@ -16,9 +16,9 @@ let pathData = System.getData(System.storedData, path);
 
 
 if (pathData == -1) {    // 如果目标不存在
-    return `<span style="color: red">${languageData['error'][System.getVar("language")] + languageData['notFound'][System.getVar("language")]}</span><br>`;
+    throw new FileError(`No such file or directory.`);
 } else if (pathData == -2) {   // 如果目标为文件
-    return `<span style="color: red">${languageData['error'][System.getVar("language")] + argv[0] + languageData['notFolder'][System.getVar("language")]}</span><br>`
+    throw new FileError(`${argv[0]} is not a folder.`);
 } else {
     Terminal.setWorkPath(path);
     return "";

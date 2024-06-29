@@ -5,9 +5,20 @@
 /*    dependencies: jQuery, Js-cookie        */
 /*********************************************/
 
-//**************************************
-//    定义变量
-//**************************************
+
+class ParameterError extends Error {
+    constructor(message) {
+      super(message);
+      this.name = "ParameterError";
+    }
+}
+
+class FileError extends Error {
+    constructor(message) {
+      super(message);
+      this.name = "FileError";
+    }
+}
 
 const System = new class {
     constructor() {
@@ -167,79 +178,23 @@ const Terminal = new class {
     runCmd(name, argv){
         if (!System.exist(["bin", name + '.js'])) 
             return `<span style="color: red">Cannot find the "${name}" !</span><br>`;
+
         if (!(name in this._cache)) {
             let funcText = System.getData(System.storedData, ['bin', name + '.js'], false, true);
             //funcText += `return ${name}(${JSON.stringify(argv)})`;
             this.addCache(name, new Function("argv", funcText));
         }
 
-        return this.cache(name)(argv);
+        try {
+            return this.cache(name)(argv);
+        } catch (e) {
+            return `<span style="color: red">${e}</span><br>`;
+        }
     }
     
 }
 
 System.setTerminal(Terminal);
-
-// 语言名称
-var languageName = ['zh-cn', 'en-us'];
-
-// 多语言支持(准备废弃)
-var languageData = {
-    'error': {
-        'zh-cn': '错误: ',
-        'en-us': 'Error: '
-    },
-
-    'tryCookie': {
-        'zh-cn': '尝试从Cookie中读取文件数据',
-        'en-us': 'Try to read the file data in cookie'
-    },
-
-    'tryCookieError': {
-        'zh-cn': '错误: 无法从Cookie中读取到正确的文件数据\nCookie:\n',
-        'en-us': 'Error: Unable to read the correct file data from the Cookie.\nCookie:\n'
-    },
-
-    'unableFind': {
-        'zh-cn': '无法找到 ',
-        'en-us': 'Unable to find '
-    },
-
-    'runCmd': {
-        'zh-cn': '运行命令: ',
-        'en-us': 'Run command: '
-    },
-
-    'argError': {
-        'zh-cn': '传入参数数量应为',
-        'en-us': 'The number of incoming parameters should be '
-    },
-
-    'notFound': {
-        'zh-cn': '无法找到对应的文件或文件夹',
-        'en-us': 'No such file or directory.'
-    },
-
-    'notFolder': {
-        'zh-cn': '不是一个文件夹',
-        'en-us': ' is not a folder.'
-    },
-
-    'updateData': {
-        'zh-cn': '已成功更新Cookie缓存的data.json',
-        'en-us': 'Successfully updated the data.json of the Cookie cache'
-    },
-
-    'syntaxError': {
-        'zh-cn': '语法错误',
-        'en-us': 'SyntaxError'
-    },
-
-    'parameterError': {
-        'zh-cn': '参数异常',
-        'en-us': 'Error: Parameter Error'
-    },
-}
 
 // 启动！
 main()
@@ -259,10 +214,10 @@ function main() {
         getJson();
     } else {
         try {
-            console.log(languageData['tryCookie'][System.getVar("language")]);
+            console.log('Try to load storedData from cookies');
             System.setVar("storedData", JSON.parse(decodeURI(Cookies.get('file'))));
         } catch (err) {
-            console.log(languageData['tryCookieError'][System.getVar("language")] + document.cookie);
+            console.log("Failed! Cookies: " + document.cookie);
             getJson();
         }
     }
@@ -302,7 +257,7 @@ function analysis() {
     command = command.split(" ").filter((x) => x !== '');
 
     // 输出日志
-    console.log(languageData['runCmd'][System.getVar("language")] + command);
+    console.log("Run: "+command);
 
     // (暂时)忽略sudo
     if (command[0] == "sudo") command = command.slice(1);

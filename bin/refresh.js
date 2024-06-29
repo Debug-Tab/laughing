@@ -9,4 +9,4 @@
 
 getJson();
 directory = [];
-return `<span>${languageData['updateData'][System.getVar("language")]}</span><br>`;
+return `<span>Successfully updated the data.json of the Cookie cache!</span><br>`;

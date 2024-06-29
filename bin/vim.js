@@ -7,8 +7,8 @@
  * @returns {String} - HTML文本
  */
 
-if (argv.length == 0) {
-    return `<span style="color: red">${SyntaxError(languageData['parameterError'][System.getVar("language")])}</span><br>`;
+if (argv.length != 1) {
+    throw new ParameterError(`vim expects 1 arguments.`);
 }
 
 // 通过判断后缀来实现高亮

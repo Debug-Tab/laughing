@@ -7,5 +7,9 @@
  * @returns {String} - HTML文本
  */
 
+if (argv.length != 1) {
+    throw new ParameterError(`touch expects 1 arguments.`);
+}
+
 System.getData(System.storedData, Terminal.getRealPath(argv[0]), true, true);
 return ``;

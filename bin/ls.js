@@ -7,6 +7,10 @@
  * @returns {String} - HTML文本
  */
 
+if (argv.length > 1) {
+    throw new ParameterError(`ls expects 0 or 1 arguments.`);
+}
+
 let d = System.getData(System.storedData, (argv.length == 0)?Terminal.workPath: Terminal.getRealPath(argv[0]));
 let dirList = [], fileList = [];
 
