@@ -11,8 +11,11 @@ if (argv.length > 1) {
     throw new ParameterError(`ls expects 0 or 1 arguments.`);
 }
 
-let d = System.getData(System.storedData, (argv.length == 0)?Terminal.workPath: Terminal.getRealPath(argv[0]));
-let dirList = [], fileList = [];
+let d = System.getData(
+    argv.length == 0 ? Terminal.workPath : new Path(argv[0])
+);
+let dirList = [],
+    fileList = [];
 
 for (let key in d) {
     if (typeof d[key] == typeof {}) {
@@ -21,7 +24,11 @@ for (let key in d) {
         fileList.push(key);
     }
 }
-    
+
 console.log(dirList, fileList);
-return `<span style="color: yellow">${Object.keys(d).filter(function(key){return typeof d[key]=='object'}).join(" ")}</span>
-        <span style="color: deepskyblue">${Object.keys(d).filter(function(key){return typeof d[key]=='string'}).join(" ")}</span><br>`;
+return `<span style="color: yellow">${Object.keys(d)
+    .filter((key) => typeof d[key] == "object")
+    .join(" ")}</span>
+        <span style="color: deepskyblue">${Object.keys(d)
+            .filter((key) => typeof d[key] == "string")
+            .join(" ")}</span><br>`;

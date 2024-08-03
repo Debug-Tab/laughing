@@ -11,7 +11,11 @@ if (argv.length != 1) {
     throw new ParameterError(`cat expects 1 arguments.`);
 }
 
-let p = Terminal.getRealPath(argv[0]);
-let text = System.getData(System.storedData, p, false, true);
+let path = new Path(argv[0]);
+let text = System.getData(path, false, true);
+
+if (text === -1) {    // 如果目标不存在
+    throw new FileError(`No such file or directory.`);
+}
 
 return `<span style="white-space: pre;">${text}</span>`;

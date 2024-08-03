@@ -11,5 +11,7 @@ if (argv.length != 1) {
     throw new ParameterError(`touch expects 1 arguments.`);
 }
 
-System.getData(System.storedData, Terminal.getRealPath(argv[0]), true, true);
+path = new Path(argv[0]);
+path.touch(true);
+
 return ``;

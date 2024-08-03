@@ -8,7 +8,7 @@
  */
 
 term.print(
-`一个简易的Javascript仿写Linux命令行
+    `一个简易的Javascript仿写Linux命令行
 
 命令:
     help 显示帮助信息
@@ -22,6 +22,7 @@ term.print(
     cl <language name> 修改语言
     touch <path> 创建文件
     copy <pathA> <pathB> 复制文件
-`)
+`
+);
 
 return "<br>";

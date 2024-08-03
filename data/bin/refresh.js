@@ -7,6 +7,6 @@
  * @returns {String} - HTML文本
  */
 
-getJson();
+getStoredDataJson();
 directory = [];
 return `<span>Successfully updated the data.json of the Cookie cache!</span><br>`;

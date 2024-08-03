@@ -11,6 +11,15 @@ if (argv.length != 2) {
     throw new ParameterError(`copy expects 2 arguments.`);
 }
 
-let content = System.getData(System.storedData, Terminal.getRealPath(argv[0]), true, true);
-System.writeData(Terminal.getRealPath(argv[1]), content);
+let source = new Path(argv[0]);
+let target = new Path(argv[1]);
+
+let content = System.getData(source, true, true);
+if (target.exist) {
+    console.log(target.path.concat(source.name), content);
+    System.writeData(target.path.concat(source.name), content);
+} else {
+    System.writeData(target, content);
+}
+
 return `<br>`;

@@ -2,18 +2,15 @@ from pathlib import Path
 from makeData import getPath
 import json
 
-_bin = getPath(Path("./bin"))
-
-with open("data.json", encoding="utf-8") as f:
-    data = json.load(f)
-    data["bin"] = _bin
+data = getPath(Path("./data"))
+jsonStr = json.dumps(
+    data,
+    indent=4,
+    sort_keys=True,
+    ensure_ascii=False
+)
 
 with open("data.json", "w", encoding="utf-8") as f:
-    json.dump(data,
-              f,
-              indent=4,
-              sort_keys=True,
-              ensure_ascii=False
-    )
+    f.write(jsonStr)
 
-print(data)
+print(jsonStr)

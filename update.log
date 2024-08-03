@@ -92,3 +92,11 @@
 	增加脚本的自动参数检测
 	添加自定义Error
 
+4.4.0 (2024/8/3)
+	使用类Path来表述路径（基本，只有天知道我搞了多久）
+	修改逻辑，不再合并data.json和bin目录，改为直接存储data目录
+	移动index.html, main.js和style.css至data目录
+	添加cp（原名copy）和pwd命令
+	添加一个不知道什么时候用的上的boot.js
+
+

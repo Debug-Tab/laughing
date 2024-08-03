@@ -11,8 +11,8 @@ if (argv.length != 1) {
 }
 
 // 获取需切换目录的信息，主要用于判断是否存在
-let path = Terminal.getRealPath(argv[0]);
-let pathData = System.getData(System.storedData, path);
+let path = new Path(argv[0]);
+let pathData = path.data;
 
 
 if (pathData == -1) {    // 如果目标不存在
@@ -20,6 +20,6 @@ if (pathData == -1) {    // 如果目标不存在
 } else if (pathData == -2) {   // 如果目标为文件
     throw new FileError(`${argv[0]} is not a folder.`);
 } else {
-    Terminal.setWorkPath(path);
+    Terminal.setWorkPath(path.path);
     return "";
 }
